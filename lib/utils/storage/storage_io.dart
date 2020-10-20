@@ -11,7 +11,7 @@ import 'storage_base.dart';
 /// handles storage on mobile and desktop devices
 class Storage extends StorageBase {
   static SharedPreferences _sharedPreferences;
-  static FlutterSecureStorage _secureStorage;
+  static FlutterSecureStorage _secureStorage = FlutterSecureStorage();
 
   @override
   Future init() async =>

@@ -19,6 +19,7 @@ dependencies:
   flutter_secure_storage:
   shared_preferences:
   flutter_spinkit:
+  flutter_event_bus:
 
 dev_dependencies:
   flutter_test:
@@ -28,5 +29,3 @@ flutter:
   uses-material-design: true
   assets:
     - assets/icon.png
-    - assets/icon_loading.png
-    - assets/icon_loading_overlay.png

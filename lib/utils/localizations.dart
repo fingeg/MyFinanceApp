@@ -29,6 +29,17 @@ class MyFinanceLocalizations {
       'username_exists': 'Username already exists',
       'wrong_password': 'Wrong password',
       'failed': 'Failed, please try again later',
+      'settings': 'Settings',
+      'new_category': 'New category',
+      'name': 'Name',
+      'category_name': 'Category name',
+      'shared_user': 'Share with user',
+      'no_categories': 'No categories yet',
+      'username_does_not_exist': 'Username does not exist',
+      'payers': 'Payers',
+      'payments': 'Payments',
+      'amount': 'Amount',
+      'pending_invoices': 'Pending invoices',
     },
     'de': {
       'title': 'MyFinance',
@@ -47,6 +58,16 @@ class MyFinanceLocalizations {
       'username_exists': 'Nutzername schon vergeben',
       'wrong_password': 'Falsches Password',
       'failed': 'Fehler, bitte später erneut versuchen',
+      'settings': 'Einstellungen',
+      'name': 'Name',
+      'category_name': 'Kategorie Name',
+      'shared_user': 'Mit Nutzern teilen',
+      'no_categories': 'Noch keine Kategorien',
+      'username_does_not_exist': 'Nutzername gibt es nicht',
+      'payers': 'Zahler',
+      'amount': 'Summe',
+      'payments': 'Zahlungen',
+      'pending_invoices': 'Ausstehende Rechnungen',
     },
   };
 
@@ -67,8 +88,19 @@ class MyFinanceLocalizations {
   String get passwordValidationCondition => _locals['password_validation_condition'];
   String get offlineMsg => _locals['offline_msg'];
   String get usernameExists => _locals['username_exists'];
+  String get usernameDoesNotExist => _locals['username_does_not_exist'];
   String get wrongPassword => _locals['wrong_password'];
   String get failed => _locals['failed'];
+  String get settings => _locals['settings'];
+  String get newCategory => _locals['new_category'];
+  String get name => _locals['name'];
+  String get categoryName => _locals['category_name'];
+  String get sharedUser => _locals['shared_user'];
+  String get noCategories => _locals['no_categories'];
+  String get payers => _locals['payers'];
+  String get payments => _locals['payments'];
+  String get amount => _locals['amount'];
+  String get pendingInvoices => _locals['pending_invoices'];
 }
 
 class MyFinanceLocalizationsDelegate extends LocalizationsDelegate<MyFinanceLocalizations> {

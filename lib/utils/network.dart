@@ -2,6 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_event_bus/flutter_event_bus.dart';
+import 'package:myfinance_app/utils/static.dart';
+
+import 'events.dart';
 
 const host = "http://192.168.178.71:8000";
 
@@ -60,25 +64,39 @@ class ApiResponse<T> {
   final StatusCode statusCode;
   final bool status;
   final String errorMsg;
+  final String rawData;
 
-  ApiResponse({this.data, this.statusCode, this.status, this.errorMsg});
+  ApiResponse(
+      {this.data, this.statusCode, this.status, this.errorMsg, this.rawData});
 }
 
-ApiResponse<T> _parseJson<T>(
+ApiResponse<T> parseJson<T>(
     String path, String rawJson, T Function(Map<String, dynamic>) jsonParser) {
   try {
     final data = jsonParser(json.decode(rawJson));
-    return ApiResponse<T>(data: data, statusCode: StatusCode.success);
+    return ApiResponse<T>(
+        data: data, statusCode: StatusCode.success, rawData: rawJson);
   } catch (e, stacktrace) {
     print('Failed to parse $path: $e\n$stacktrace');
-    return ApiResponse<T>(statusCode: StatusCode.wrongFormat);
+    return ApiResponse<T>(statusCode: StatusCode.wrongFormat, rawData: rawJson);
   }
 }
 
-Future<ApiResponse<T>> request<T>(String path, HttpMethod httpMethod,
-    {Authentication authentication,
-    Map<String, dynamic> data,
-    T Function(Map<String, dynamic>) jsonParser}) async {
+Future<ApiResponse<T>> request<T>(
+  String path,
+  HttpMethod httpMethod, {
+  String key,
+  EventBus eventBus,
+  Authentication authentication,
+  Map<String, dynamic> data,
+  T Function(Map<String, dynamic>) jsonParser,
+}) async {
+  // Update the gui
+  if (eventBus != null && key != null) {
+    Static.loading.setLoading(key, true);
+    eventBus.publish(LoadingStatusChangedEvent(key));
+  }
+
   final dio = Dio()
     ..options = BaseOptions(
       headers: authentication != null
@@ -89,8 +107,8 @@ Future<ApiResponse<T>> request<T>(String path, HttpMethod httpMethod,
             }
           : null,
       responseType: ResponseType.plain,
-      connectTimeout: 3000,
-      receiveTimeout: 3000,
+      connectTimeout: 10000,
+      receiveTimeout: 10000,
     );
 
   if (!path.startsWith('/')) {
@@ -107,8 +125,18 @@ Future<ApiResponse<T>> request<T>(String path, HttpMethod httpMethod,
       throw DioError(response: res, type: DioErrorType.RESPONSE);
     }
 
-    return _parseJson(path, res.toString(), jsonParser);
+    // Update the gui
+    if (eventBus != null && key != null) {
+      Static.loading.setLoading(key, false);
+      eventBus.publish(LoadingStatusChangedEvent(key));
+    }
+    return parseJson(path, res.toString(), jsonParser);
   } on DioError catch (e) {
+    // Update the gui
+    if (eventBus != null && key != null) {
+      Static.loading.setLoading(key, false);
+      eventBus.publish(LoadingStatusChangedEvent(key));
+    }
     switch (e.type) {
       case DioErrorType.RESPONSE:
         final data = e.response.data.toString();
@@ -144,6 +172,7 @@ Future<ApiResponse<T>> request<T>(String path, HttpMethod httpMethod,
             errorMsg: (parsed['error'] ?? ''));
       case DioErrorType.DEFAULT:
         if (e.error is SocketException) {
+          await
           print('Failed to load $path: offline');
           return ApiResponse(statusCode: StatusCode.offline);
         }

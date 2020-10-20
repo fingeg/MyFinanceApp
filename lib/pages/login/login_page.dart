@@ -19,6 +19,7 @@ class _LoginPageState extends State<LoginPage> {
   bool _loading = false;
   String _errorMsg = '';
   bool _usernameAlreadyExists = false;
+  bool _usernameDoesNotExists = false;
   bool wrongPassword = false;
 
   // All controller
@@ -45,18 +46,18 @@ class _LoginPageState extends State<LoginPage> {
       // If it is a new user, sign up first
       if (_loginStatus == _LoginStatus.signUp) {
         final response = await authHandler.register(username, password);
-        if (!handleStatusCode(response.statusCode)) {
+        if (!handleStatusCode(response.statusCode, true)) {
           if (mounted) setState(() => _loading = false);
-          _formKey.currentState.validate();
+          _formKey.currentState?.validate();
           return;
         }
       }
 
       // Then always create a new session
       final response = await authHandler.login(username, password);
-      if (!handleStatusCode(response.statusCode)) {
+      if (!handleStatusCode(response.statusCode, false)) {
         if (mounted) setState(() => _loading = false);
-        _formKey.currentState.validate();
+        _formKey.currentState?.validate();
         return;
       }
 
@@ -65,7 +66,13 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  bool handleStatusCode(StatusCode statusCode) {
+  bool handleStatusCode(StatusCode statusCode, bool signUp) {
+    // Reset previous errors
+    _usernameAlreadyExists = false;
+    _usernameDoesNotExists = false;
+    wrongPassword = false;
+    _errorMsg = '';
+
     switch (statusCode) {
       case StatusCode.offline:
         _errorMsg = MyFinanceLocalizations.of(context).offlineMsg;
@@ -74,7 +81,10 @@ class _LoginPageState extends State<LoginPage> {
         wrongPassword = true;
         return false;
       case StatusCode.conflict:
-        _usernameAlreadyExists = true;
+        if (signUp)
+          _usernameAlreadyExists = true;
+        else
+          _usernameDoesNotExists = true;
         return false;
       case StatusCode.success:
         return true;
@@ -104,9 +114,6 @@ class _LoginPageState extends State<LoginPage> {
           child: LayoutBuilder(builder: (context, constraints) {
             return Center(
               child: AnimatedSwitcher(
-                /*crossFadeState: _loading
-                    ? CrossFadeState.showSecond
-                    : CrossFadeState.showFirst,*/
                 duration: Duration(milliseconds: 400),
                 child: !_loading
                     ? SingleChildScrollView(
@@ -202,6 +209,11 @@ class _LoginPageState extends State<LoginPage> {
                                           return MyFinanceLocalizations.of(
                                                   context)
                                               .usernameExists;
+                                        }
+                                        if (_usernameDoesNotExists) {
+                                          return MyFinanceLocalizations.of(
+                                                  context)
+                                              .usernameDoesNotExist;
                                         }
                                         return null;
                                       },

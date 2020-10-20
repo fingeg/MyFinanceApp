@@ -83,7 +83,7 @@ class RsaHelper {
   ///
   /// Given a base64 encoded PEM [String] with correct headers and footers, return a
   /// [RSAPrivateKey]
-  static RSAPrivateKey parsePrivateKeyFromPem(pemString) {
+  static RSAPrivateKey parsePrivateKeyFromPem(String pemString) {
     final privateKeyDER = _decodePEM(pemString);
     var asn1Parser = ASN1Parser(privateKeyDER);
     var topLevelSeq = asn1Parser.nextObject() as ASN1Sequence;

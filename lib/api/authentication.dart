@@ -5,6 +5,7 @@ import 'package:myfinance_app/utils/encryption/encryption.dart';
 import 'package:myfinance_app/utils/keys.dart';
 import 'package:myfinance_app/utils/network.dart';
 import 'package:myfinance_app/utils/encryption/rsa.dart';
+import 'package:myfinance_app/utils/static.dart';
 import 'package:srp/client.dart';
 
 class AuthenticationHandler {
@@ -38,17 +39,17 @@ class AuthenticationHandler {
 
     if (response.statusCode == StatusCode.success) {
       final storage = FlutterSecureStorage();
-      storage.write(key: Keys.salt, value: salt);
-      storage.write(key: Keys.srpPrivateKey, value: srpPrivateKey);
-      storage.write(key: Keys.rsaPublicKey, value: rsaPublicKey);
-      storage.write(key: Keys.rsaPrivateKey, value: rsaPrivateKey);
+      Static.storage.storeSensitiveString(Keys.salt, salt);
+      Static.storage.storeSensitiveString(Keys.username, username);
+      Static.storage.storeSensitiveString(Keys.srpPrivateKey, srpPrivateKey);
+      Static.storage.storeSensitiveString(Keys.rsaPublicKey, rsaPublicKey);
+      Static.storage.storeSensitiveString(Keys.rsaPrivateKey, rsaPrivateKey);
     }
 
     return response;
   }
 
-  Future<ApiResponse<void>> login(
-      String username, String password) async {
+  Future<ApiResponse<void>> login(String username, String password) async {
     // Initialize keys for SRP (Secure remote password) authentication
     final ephemeral = generateEphemeral();
 
@@ -99,29 +100,40 @@ class AuthenticationHandler {
 
       // Check if the server also has the correct proof
       try {
-        verifySession(ephemeral.public, clientSession, res2.data.serverSessionProof);
+        verifySession(
+            ephemeral.public, clientSession, res2.data.serverSessionProof);
 
         // Decrypt the received private key, to be able to decrypt all user data
-        final rsaPrivateKey = decrypt(srpPrivateKey, Encoding.base16, res2.data.privateKey);
+        final rsaPrivateKey =
+            decrypt(srpPrivateKey, Encoding.base16, res2.data.privateKey);
 
         // If verify session did not send an exception, than the login was correct
         // Save all session keys
-        final storage = FlutterSecureStorage();
-        storage.write(key: Keys.srpPrivateKey, value: srpPrivateKey);
-        storage.write(key: Keys.rsaPublicKey, value: res2.data.publicKey);
-        storage.write(key: Keys.rsaPrivateKey, value: rsaPrivateKey);
-        storage.write(key: Keys.sessionProof, value: clientSession.proof);
-        storage.write(key: Keys.salt, value: res1.data.salt);
+        Static.storage.storeSensitiveString(Keys.username, username);
+        Static.storage.storeSensitiveString(Keys.srpPrivateKey, srpPrivateKey);
+        Static.storage
+            .storeSensitiveString(Keys.rsaPublicKey, res2.data.publicKey);
+        Static.storage.storeSensitiveString(Keys.rsaPrivateKey, rsaPrivateKey);
+        Static.storage
+            .storeSensitiveString(Keys.sessionProof, clientSession.proof);
+        Static.storage
+            .storeSensitiveString(Keys.sessionId, res1.data.loginID.toString());
+        Static.storage.storeSensitiveString(Keys.salt, res1.data.salt);
 
         return res2;
       } catch (e) {
         return ApiResponse(statusCode: StatusCode.failed);
       }
-
     } catch (e) {
       return ApiResponse(statusCode: StatusCode.failed);
     }
   }
+
+  static Future<Authentication> getAuthentication() async => Authentication(
+        await Static.storage.getSensitiveString(Keys.username),
+        await Static.storage.getSensitiveString(Keys.sessionProof),
+        int.parse(await Static.storage.getSensitiveString(Keys.sessionId)),
+      );
 }
 
 class _LoginResponseOne {
@@ -147,7 +159,8 @@ class _LoginResponseTwo {
   final String publicKey;
   final bool status;
 
-  _LoginResponseTwo(this.serverSessionProof, this.privateKey, this.publicKey, this.status);
+  _LoginResponseTwo(
+      this.serverSessionProof, this.privateKey, this.publicKey, this.status);
 
   factory _LoginResponseTwo.fromJson(Map<String, dynamic> json) =>
       _LoginResponseTwo(
