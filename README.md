@@ -1,16 +1,8 @@
-# myfinance_app
+# MyFinance app
+The MyFinance app helps you mangage the finance of multiple projects and activities at the same time. You can keep track of who paid what and split the money equally.
 
-Control your finance for differenct projects or activities and send your bills directly to anyone who was part of the project
+## Privacy / Security
+All your finance data are end-to-end encrypted, so only you (with all your devices) and the users you gave access to the specific categories can encrypt it. This way noone else can access your data (Not even the server administrator).
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Server
+The MyFinance server is in another [repo](https://github.com/fingeg/MyFinanceServer)
