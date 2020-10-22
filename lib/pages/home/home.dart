@@ -84,10 +84,7 @@ class _HomePageState extends Interactor<HomePage> {
         appBar: AppBar(
           title: Text(
             MyFinanceLocalizations.of(context).title,
-            style: TextStyle(
-              fontWeight: FontWeight.w100,
-              fontSize: 25,
-            ),
+            style: Theme.of(context).textTheme.headline1,
           ),
           actions: [
             IconButton(

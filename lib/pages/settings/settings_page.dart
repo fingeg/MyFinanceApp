@@ -13,10 +13,7 @@ class _SettingsPageState extends State<SettingsPage> {
       appBar: AppBar(
         title: Text(
           MyFinanceLocalizations.of(context).settings,
-          style: TextStyle(
-            fontWeight: FontWeight.w100,
-            fontSize: 25,
-          ),
+          style: Theme.of(context).textTheme.headline1,
         ),
       ),
       body: SafeArea(child: Text('Settings')),

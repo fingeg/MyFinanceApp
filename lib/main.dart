@@ -11,6 +11,8 @@ void main() async {
 
   await Static.storage.init();
 
+  const textColor = Colors.white;
+
   runApp(EventBusWidget(
     child: MaterialApp(
       title: 'MyFinance',
@@ -20,7 +22,34 @@ void main() async {
         accentColor: Color.fromARGB(0xff, 0x36, 0xa3, 0x26),
         snackBarTheme: SnackBarThemeData(
           backgroundColor: Colors.grey[900],
-          contentTextStyle: TextStyle(color: Colors.white),
+          contentTextStyle: TextStyle(color: textColor),
+        ),
+        textTheme: TextTheme(
+          headline1: TextStyle(
+            fontWeight: FontWeight.w100,
+            color: textColor,
+            fontSize: 25,
+          ),
+          headline6: TextStyle(
+            fontWeight: FontWeight.w100,
+            color: textColor,
+            fontSize: 23,
+          ),
+          subtitle1: TextStyle(
+            fontWeight: FontWeight.w100,
+            fontSize: 15,
+            color: textColor.withAlpha(150),
+          ),
+          bodyText1: TextStyle(
+            fontWeight: FontWeight.w100,
+            fontSize: 20,
+            color: textColor,
+          ),
+          bodyText2: TextStyle(
+            fontWeight: FontWeight.w100,
+            fontSize: 15,
+            color: textColor,
+          ),
         )
       ),
       routes: <String, WidgetBuilder>{

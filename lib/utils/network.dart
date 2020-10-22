@@ -171,8 +171,8 @@ Future<ApiResponse<T>> request<T>(
             status: (parsed['status'] ?? '') == 'true',
             errorMsg: (parsed['error'] ?? ''));
       case DioErrorType.DEFAULT:
-        if (e.error is SocketException) {
-          await
+        if (e.error is SocketException && await _isOffline()) {
+
           print('Failed to load $path: offline');
           return ApiResponse(statusCode: StatusCode.offline);
         }
@@ -183,4 +183,16 @@ Future<ApiResponse<T>> request<T>(
         return ApiResponse(statusCode: StatusCode.failed);
     }
   }
+}
+
+Future<bool> _isOffline() async {
+  try {
+    final result = await InternetAddress.lookup('google.com');
+    if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+      return false;
+    }
+  } on SocketException catch (_) {
+    return true;
+  }
+  return false;
 }

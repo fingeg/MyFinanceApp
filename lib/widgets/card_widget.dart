@@ -45,7 +45,7 @@ class CardWidget extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 20),
+                  padding: const EdgeInsets.all(10),
                   child: Column(
                     children: subInfo
                         .map((subInfo) => _PaymentRow(

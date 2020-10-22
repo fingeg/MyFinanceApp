@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:line_icons/line_icons.dart';
+import 'package:myfinance_app/pages/category/add_payment_dialog.dart';
 import 'package:myfinance_app/utils/localizations.dart';
 import 'package:myfinance_app/utils/models.dart';
 
@@ -22,7 +24,7 @@ class _CategoryPageState extends State<CategoryPage> {
 
     final payments = widget.category.payments
         .where((p) => !p.payed)
-        .map((p) => _TableRow(p.name, p.amount))
+        .map((p) => _TableRow(p.name, p.amount, p.description))
         .toList();
 
     final pendingInvoices = widget.category.splits
@@ -45,10 +47,7 @@ class _CategoryPageState extends State<CategoryPage> {
           tag: '${widget.category.id}-title',
           child: Text(
             widget.category.name,
-            style: TextStyle(
-              fontWeight: FontWeight.w100,
-              fontSize: 25,
-            ),
+            style: Theme.of(context).textTheme.headline1,
           ),
         ),
         actions: [
@@ -57,14 +56,58 @@ class _CategoryPageState extends State<CategoryPage> {
             child: Center(
               child: Text(
                 '${amount < 0 ? '-' : '+'} ${amount.toStringAsFixed(2).replaceAll('-', '')}€',
-                style: TextStyle(
-                  fontSize: 25,
-                  fontWeight: FontWeight.w100,
-                ),
+                style: Theme.of(context).textTheme.headline1,
               ),
             ),
           ),
         ],
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(40),
+          child: Container(
+            padding: const EdgeInsets.only(left: 15),
+            height: 40,
+            decoration: BoxDecoration(
+              border: Border(
+                top: BorderSide(
+                  color:
+                      Theme.of(context).textTheme.headline1.color.withAlpha(50),
+                  width: 0.2,
+                ),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Tooltip(
+                    message: widget.category.description,
+                    child: Text(
+                      widget.category.description,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.subtitle1,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(LineIcons.plus),
+                  color: Theme.of(context).textTheme.subtitle1.color,
+                  onPressed: () => showDialog(
+                    context: context,
+                    builder: (context) =>
+                        AddPaymentDialog(category: widget.category),
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(LineIcons.pencil),
+                  color: Theme.of(context).textTheme.subtitle1.color,
+                  onPressed: () => null,
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -127,18 +170,12 @@ class CardTable extends StatelessWidget {
                 children: [
                   Text(
                     header,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w100,
-                    ),
+                    style: Theme.of(context).textTheme.bodyText1,
                   ),
                   Text(
                     MyFinanceLocalizations.of(context).amount,
                     textAlign: TextAlign.end,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w100,
-                    ),
+                    style: Theme.of(context).textTheme.bodyText1,
                   ),
                 ],
               ),
@@ -146,20 +183,22 @@ class CardTable extends StatelessWidget {
                   .map(
                     (row) => TableRow(
                       children: [
-                        Text(
-                          row.name,
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w100,
-                          ),
-                        ),
+                        row.description != null
+                            ? Tooltip(
+                                message: row.description ?? '',
+                                child: Text(
+                                  row.name,
+                                  style: Theme.of(context).textTheme.bodyText1,
+                                ),
+                              )
+                            : Text(
+                                row.name,
+                                style: Theme.of(context).textTheme.bodyText1,
+                              ),
                         Text(
                           '${row.amount < 0 ? '-' : '+'} ${row.amount.toStringAsFixed(2).replaceAll('-', '')}€',
                           textAlign: TextAlign.end,
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w100,
-                          ),
+                          style: Theme.of(context).textTheme.bodyText1,
                         ),
                       ],
                     ),
@@ -176,6 +215,7 @@ class CardTable extends StatelessWidget {
 class _TableRow {
   final String name;
   final double amount;
+  final String description;
 
-  _TableRow(this.name, this.amount);
+  _TableRow(this.name, this.amount, [this.description]);
 }

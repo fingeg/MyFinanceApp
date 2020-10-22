@@ -64,11 +64,11 @@ class Category {
   }
 
   List<String> getAllPayers() =>
-      payments.where((p) => !p.payed).map((p) => p.name).toSet().toList();
+      payments.where((p) => !p.payed).map((p) => p.payer).toSet().toList();
 }
 
 class Payment {
-  final int id;
+  int id;
   final String name;
   final String description;
   final int categoryID;
@@ -86,7 +86,7 @@ class Payment {
         json['description'],
         json['categoryID'],
         json['amount'],
-        json['date'],
+        DateTime.parse(json['date']),
         json['payer'],
         json['payed'],
       );
@@ -99,10 +99,23 @@ class Payment {
         decrypt(categoryKey, Encoding.base64, json['description']),
         json['categoryID'],
         double.parse(decrypt(categoryKey, Encoding.base64, json['amount'])),
-        json['date'],
+        DateTime.parse(json['date']),
         decrypt(categoryKey, Encoding.base64, json['payer']),
-        json['payed'],
+        json['payed'] as bool,
       );
+
+  Map<String, dynamic> toEncryptedMap(String categoryKey) {
+    return {
+      'id': id,
+      'name': encrypt(categoryKey, Encoding.base64, name),
+      'description': encrypt(categoryKey, Encoding.base64, description),
+      'categoryID': categoryID,
+      'amount': encrypt(categoryKey, Encoding.base64, amount.toString()),
+      'date': date.toIso8601String(),
+      'payer': encrypt(categoryKey, Encoding.base64, payer),
+      'payed': payed,
+    };
+  }
 }
 
 class Split {

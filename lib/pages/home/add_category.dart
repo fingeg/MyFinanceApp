@@ -14,10 +14,7 @@ class _AddCategoryState extends State<AddCategory> {
       appBar: AppBar(
         title: Text(
           MyFinanceLocalizations.of(context).newCategory,
-          style: TextStyle(
-            fontWeight: FontWeight.w100,
-            fontSize: 25,
-          ),
+          style: Theme.of(context).textTheme.headline1,
         ),
       ),
       body: Center(
@@ -49,10 +46,7 @@ class _AddCategoryState extends State<AddCategory> {
               alignment: Alignment.centerLeft,
               child: Text(
                 MyFinanceLocalizations.of(context).sharedUser,
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w100,
-                ),
+                style: Theme.of(context).textTheme.bodyText1,
               ),
             ),
           ],

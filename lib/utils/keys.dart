@@ -7,4 +7,5 @@ class Keys {
   static get sessionProof => 'sessionProof';
   static get sessionId => 'sessionId';
   static get categories => 'categories';
+  static get payments => 'payments';
 }

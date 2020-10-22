@@ -40,6 +40,16 @@ class MyFinanceLocalizations {
       'payments': 'Payments',
       'amount': 'Amount',
       'pending_invoices': 'Pending invoices',
+      'add_payment': 'New payment',
+      'description': 'Description',
+      'name_condition': 'The name must not by empty',
+      'amount_condition': 'The amount must not by empty',
+      'date': 'Date',
+      'date_condition': 'Wrong date',
+      'payer_condition': 'Payer must be set',
+      'add': 'Add',
+      'payer': 'Payer',
+      'write_rights_required': 'You need at least write permissions',
     },
     'de': {
       'title': 'MyFinance',
@@ -68,6 +78,16 @@ class MyFinanceLocalizations {
       'amount': 'Summe',
       'payments': 'Zahlungen',
       'pending_invoices': 'Ausstehende Rechnungen',
+      'add_payment': 'Neue Bezahlung',
+      'description': 'Beschreibung',
+      'name_condition': 'Der Name darf nicht leer sein',
+      'amount_condition': 'Der Betrag darf nicht leer sein',
+      'date': 'Datum',
+      'date_condition': 'Falsches Datum',
+      'payer_condition': 'Zahler muss angegeben werden',
+      'add': 'Hinzufügen',
+      'payer': 'Zahler',
+      'write_rights_required': 'Sie benötigen mindestens Schreibrechte',
     },
   };
 
@@ -94,13 +114,23 @@ class MyFinanceLocalizations {
   String get settings => _locals['settings'];
   String get newCategory => _locals['new_category'];
   String get name => _locals['name'];
+  String get description => _locals['description'];
   String get categoryName => _locals['category_name'];
   String get sharedUser => _locals['shared_user'];
   String get noCategories => _locals['no_categories'];
   String get payers => _locals['payers'];
   String get payments => _locals['payments'];
   String get amount => _locals['amount'];
+  String get date => _locals['date'];
+  String get addPayment => _locals['add_payment'];
+  String get add => _locals['add'];
   String get pendingInvoices => _locals['pending_invoices'];
+  String get nameCondition => _locals['name_condition'];
+  String get amountCondition => _locals['amount_condition'];
+  String get dateCondition => _locals['date_condition'];
+  String get payerCondition => _locals['payer_condition'];
+  String get payer => _locals['payer'];
+  String get writeRightsRequired => _locals['write_rights_required'];
 }
 
 class MyFinanceLocalizationsDelegate extends LocalizationsDelegate<MyFinanceLocalizations> {
