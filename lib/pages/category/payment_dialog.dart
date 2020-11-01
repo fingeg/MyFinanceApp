@@ -10,17 +10,22 @@ import 'package:myfinance_app/utils/localizations.dart';
 import 'package:myfinance_app/utils/models.dart';
 import 'package:myfinance_app/utils/network.dart';
 import 'package:myfinance_app/utils/static.dart';
+import 'package:myfinance_app/widgets/delete_button.dart';
+import 'package:myfinance_app/widgets/delete_confirmation_dialog.dart';
 
-class AddPaymentDialog extends StatefulWidget {
+class PaymentDialog extends StatefulWidget {
   final Category category;
 
-  const AddPaymentDialog({Key key, this.category}) : super(key: key);
+  /// If set, the payment will be edited, otherwise created
+  final Payment payment;
+
+  const PaymentDialog({Key key, this.category, this.payment}) : super(key: key);
 
   @override
-  _AddPaymentDialogState createState() => _AddPaymentDialogState();
+  _PaymentDialogState createState() => _PaymentDialogState();
 }
 
-class _AddPaymentDialogState extends State<AddPaymentDialog> {
+class _PaymentDialogState extends State<PaymentDialog> {
   final _formKey = GlobalKey<FormState>();
 
   final _nameController = TextEditingController();
@@ -34,16 +39,28 @@ class _AddPaymentDialogState extends State<AddPaymentDialog> {
   final _dateFocus = FocusNode();
   final _payerFocus = FocusNode();
 
+  bool isExpense = true;
+
   bool _loading = false;
   String _errorMsg = '';
 
   @override
   void initState() {
-    _dateController.text = DateFormat('dd/MM/yyyy').format(DateTime.now());
-    Static.storage
-        .getSensitiveString(Keys.username)
-        .then((value) => setState(() => _payerController.text = value));
-
+    if (widget.payment != null) {
+      _nameController.text = widget.payment.name;
+      _descriptionController.text = widget.payment.description;
+      _amountController.text =
+          _CurrencyInputFormatter.toAmountString(widget.payment.amount);
+      _dateController.text =
+          DateFormat('dd/MM/yyyy').format(widget.payment.date);
+      _payerController.text = widget.payment.payer;
+      isExpense = widget.payment.amount < 0;
+    } else {
+      _dateController.text = DateFormat('dd/MM/yyyy').format(DateTime.now());
+      Static.storage
+          .getSensitiveString(Keys.username)
+          .then((value) => setState(() => _payerController.text = value));
+    }
     super.initState();
   }
 
@@ -52,11 +69,12 @@ class _AddPaymentDialogState extends State<AddPaymentDialog> {
       setState(() => _loading = true);
 
       final payment = Payment(
-        null,
+        widget.payment?.id,
         _nameController.text,
         _descriptionController.text,
         widget.category.id,
-        _CurrencyInputFormatter.parseInput(_amountController.text),
+        _CurrencyInputFormatter.parseInput(_amountController.text) *
+            (isExpense ? -1 : 1),
         DateFormat('dd/MM/yyyy').parse(_dateController.text),
         _payerController.text,
         false,
@@ -64,7 +82,7 @@ class _AddPaymentDialogState extends State<AddPaymentDialog> {
 
       final handler = PaymentHandler();
       final eventBus = EventBus.of(context);
-      final res = await handler.addPayment(
+      final res = await handler.setPayment(
           payment, widget.category.encryptionKey, eventBus);
 
       if (mounted) {
@@ -87,9 +105,43 @@ class _AddPaymentDialogState extends State<AddPaymentDialog> {
     }
   }
 
+  Future<void> delete() async {
+    setState(() => _loading = true);
+
+    final eventBus = EventBus.of(context);
+    final handler = PaymentHandler();
+    final res = await handler.deletePayment(widget.payment);
+
+    if (mounted) {
+      setState(() => _loading = false);
+    }
+
+    handleStatusCode(res.statusCode, eventBus);
+  }
+
+  void handleStatusCode(StatusCode statusCode, EventBus eventBus) {
+    if (statusCode == StatusCode.success && mounted) {
+      eventBus.publish(UpdateDataEvent());
+      Navigator.of(context).pop();
+    } else if (statusCode == StatusCode.unauthorized) {
+      Navigator.of(context).popAndPushNamed('/login');
+    } else if (statusCode == StatusCode.offline) {
+      _errorMsg = MyFinanceLocalizations.of(context).offlineMsg;
+    } else if (statusCode == StatusCode.forbidden) {
+      _errorMsg = MyFinanceLocalizations.of(context).writeRightsRequired;
+    } else {
+      _errorMsg = MyFinanceLocalizations.of(context).failed;
+    }
+    if (mounted) setState(() => null);
+  }
+
   @override
   Widget build(BuildContext context) => SimpleDialog(
-        title: Text(MyFinanceLocalizations.of(context).addPayment),
+        title: Text(
+          widget.payment == null
+              ? MyFinanceLocalizations.of(context).addPayment
+              : MyFinanceLocalizations.of(context).editPayment,
+        ),
         contentPadding: EdgeInsets.all(20),
         children: [
           AnimatedSwitcher(
@@ -151,6 +203,40 @@ class _AddPaymentDialogState extends State<AddPaymentDialog> {
                           },
                           onEditingComplete: _dateFocus.nextFocus,
                         ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Radio(
+                              value: true,
+                              groupValue: isExpense,
+                              onChanged: (value) =>
+                                  setState(() => isExpense = value),
+                            ),
+                            InkWell(
+                              onTap: () => setState(() => isExpense = true),
+                              highlightColor: Colors.transparent,
+                              splashColor: Colors.transparent,
+                              child: Text(
+                                  MyFinanceLocalizations.of(context).expense),
+                            ),
+                            Container(
+                              width: 20,
+                            ),
+                            Radio(
+                              value: false,
+                              groupValue: isExpense,
+                              onChanged: (value) =>
+                                  setState(() => isExpense = value),
+                            ),
+                            InkWell(
+                              onTap: () => setState(() => isExpense = false),
+                              highlightColor: Colors.transparent,
+                              splashColor: Colors.transparent,
+                              child: Text(
+                                  MyFinanceLocalizations.of(context).revenue),
+                            ),
+                          ],
+                        ),
                         TextFormField(
                           controller: _dateController,
                           decoration: InputDecoration(
@@ -187,6 +273,14 @@ class _AddPaymentDialogState extends State<AddPaymentDialog> {
                             return null;
                           },
                         ),
+                        if (widget.payment != null)
+                          DeleteButton(
+                            text: MyFinanceLocalizations.of(context)
+                                .deletePayment,
+                            confirmationText: MyFinanceLocalizations.of(context)
+                                .deletePaymentConfirmation,
+                            onDelete: delete,
+                          ),
                         Padding(
                           padding: const EdgeInsets.only(top: 10),
                           child: Row(
@@ -206,8 +300,10 @@ class _AddPaymentDialogState extends State<AddPaymentDialog> {
                               ),
                               OutlineButton(
                                 onPressed: _submit,
-                                child: Text(
-                                    MyFinanceLocalizations.of(context).add),
+                                child: Text(widget.payment == null
+                                    ? MyFinanceLocalizations.of(context).add
+                                    : MyFinanceLocalizations.of(context)
+                                        .update),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
@@ -261,6 +357,9 @@ class _CurrencyInputFormatter extends TextInputFormatter {
       composing: newValue.composing,
     );
   }
+
+  static String toAmountString(double amount) =>
+      '${amount.abs().toStringAsFixed(2)}€';
 
   static double parseInput(String input) {
     if (isValidAmount(input)) {

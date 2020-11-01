@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_event_bus/flutter_event_bus.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:myfinance_app/api/categories.dart';
-import 'package:myfinance_app/pages/category/add_payment_dialog.dart';
+import 'package:myfinance_app/pages/category/payment_dialog.dart';
+import 'package:myfinance_app/pages/category/category_dialog.dart';
 import 'package:myfinance_app/utils/events.dart';
 import 'package:myfinance_app/utils/keys.dart';
 import 'package:myfinance_app/utils/localizations.dart';
@@ -133,20 +134,26 @@ class _CategoryPageState extends Interactor<CategoryPage> {
                         ),
                       ),
                     ),
-                    IconButton(
-                      icon: Icon(LineIcons.plus),
-                      color: Theme.of(context).textTheme.subtitle1.color,
-                      onPressed: () => showDialog(
-                        context: context,
-                        builder: (context) =>
-                            AddPaymentDialog(category: category),
+                    if (category.permission != Permission.read)
+                      IconButton(
+                        icon: Icon(LineIcons.plus),
+                        color: Theme.of(context).textTheme.subtitle1.color,
+                        onPressed: () => showDialog(
+                          context: context,
+                          builder: (context) =>
+                              PaymentDialog(category: category),
+                        ),
                       ),
-                    ),
-                    IconButton(
-                      icon: Icon(LineIcons.pencil),
-                      color: Theme.of(context).textTheme.subtitle1.color,
-                      onPressed: () => null,
-                    ),
+                    if (category.permission != Permission.read)
+                      IconButton(
+                        icon: Icon(LineIcons.pencil),
+                        color: Theme.of(context).textTheme.subtitle1.color,
+                        onPressed: () => showDialog(
+                          context: context,
+                          builder: (context) =>
+                              CategoryDialog(category: category),
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -176,7 +183,13 @@ class _CategoryPageState extends Interactor<CategoryPage> {
             CardTable<Payment>(
               header: MyFinanceLocalizations.of(context).payments,
               rows: payments,
-              onTap: (row) => null,
+              onTap: (row) => showDialog(
+                context: context,
+                builder: (context) => PaymentDialog(
+                  category: category,
+                  payment: row.metadata,
+                ),
+              ),
             ),
           ],
         ),

@@ -66,4 +66,46 @@ class CategoriesHandler {
 
     return null;
   }
+
+  /// Updates or edits a category
+  ///
+  /// When the category id is set, it updates, otherwise it creates a category
+  Future<ApiResponse<_CategoryResponse>> setCategory(Category category) async {
+    final auth = await AuthenticationHandler.getAuthentication();
+    final rsaPublicKey =
+        await Static.storage.getSensitiveString(Keys.rsaPublicKey);
+    return request<_CategoryResponse>(
+      '/category',
+      category.id == null ? HttpMethod.POST : HttpMethod.PUT,
+      authentication: auth,
+      data: category.toEncryptedJson(rsaPublicKey),
+      jsonParser: (json) => _CategoryResponse.fromJson(json),
+    );
+  }
+
+  /// Deletes a category
+  Future<ApiResponse<bool>> deleteCategory(
+      Category category) async {
+    final auth = await AuthenticationHandler.getAuthentication();
+    return request<bool>(
+      '/category',
+      HttpMethod.DELETE,
+      authentication: auth,
+      data: {'id': category.id},
+      jsonParser: (json) => json['status'],
+    );
+  }
+}
+
+class _CategoryResponse {
+  final bool status;
+  final int id;
+
+  _CategoryResponse(this.status, this.id);
+
+  factory _CategoryResponse.fromJson(Map<String, dynamic> json) =>
+      _CategoryResponse(
+        json['status'],
+        json['categoryID'],
+      );
 }

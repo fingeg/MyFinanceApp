@@ -5,7 +5,9 @@ import 'package:myfinance_app/utils/models.dart';
 import 'package:myfinance_app/utils/network.dart';
 
 class PaymentHandler {
-  Future<ApiResponse> addPayment(Payment payment, String categoryKey, EventBus eventBus) async {
+  /// Adds or updates a payment
+  Future<ApiResponse> setPayment(
+      Payment payment, String categoryKey, EventBus eventBus) async {
     final auth = await AuthenticationHandler.getAuthentication();
     final res = await request<int>(
       '/payment',
@@ -13,11 +15,23 @@ class PaymentHandler {
       key: Keys.payments,
       eventBus: eventBus,
       authentication: auth,
-      data: payment.toEncryptedMap(categoryKey),
+      data: payment.toEncryptedJson(categoryKey),
       jsonParser: (json) => json['id'],
     );
 
     payment.id = res.data;
     return res;
+  }
+
+  /// Deletes a payment
+  Future<ApiResponse<bool>> deletePayment(Payment payment) async {
+    final auth = await AuthenticationHandler.getAuthentication();
+    return request<bool>(
+      '/payment',
+      HttpMethod.DELETE,
+      authentication: auth,
+      data: {'id': payment.id},
+      jsonParser: (json) => json['status'],
+    );
   }
 }

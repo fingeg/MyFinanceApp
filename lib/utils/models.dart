@@ -44,6 +44,22 @@ class Category {
     );
   }
 
+  Map<String, dynamic> toEncryptedJson(String rsaPublicKey) {
+    final publicKey = RsaHelper.parsePublicKeyFromPem(rsaPublicKey);
+    final encryptedKey = RsaHelper.encrypt(publicKey, encryptionKey);
+    return {
+      'id': id,
+      'name': encrypt(encryptionKey, Encoding.base64, name),
+      'description': encrypt(encryptionKey, Encoding.base64, description),
+      'permission': permission.index,
+      'payments':
+          payments.map((p) => p.toEncryptedJson(encryptionKey)).toList(),
+      'splits': splits.map((s) => s.toJson()).toList(),
+      'isSplit': splits.isNotEmpty,
+      'encryptionKey': encryptedKey,
+    };
+  }
+
   bool get isSplit => splits.isNotEmpty;
 
   double get amount {
@@ -106,7 +122,7 @@ class Payment {
         json['payed'] as bool,
       );
 
-  Map<String, dynamic> toEncryptedMap(String categoryKey) {
+  Map<String, dynamic> toEncryptedJson(String categoryKey) {
     return {
       'id': id,
       'name': encrypt(categoryKey, Encoding.base64, name),
@@ -134,6 +150,14 @@ class Split {
         json['share'],
         json['isPlatformUser'],
       );
+
+  Map<String, dynamic> toJson() {
+    return {
+      'username': username,
+      'share': share,
+      'isPlatformUser': isPlatformUser,
+    };
+  }
 }
 
 enum Permission { read, readWrite, owner }

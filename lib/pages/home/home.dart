@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_event_bus/flutter_event_bus.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:myfinance_app/api/categories.dart';
-import 'package:myfinance_app/pages/home/add_category.dart';
+import 'package:myfinance_app/pages/category/category_dialog.dart';
 import 'package:myfinance_app/utils/events.dart';
 import 'package:myfinance_app/utils/keys.dart';
 import 'package:myfinance_app/utils/localizations.dart';
@@ -89,12 +89,9 @@ class _HomePageState extends Interactor<HomePage> {
           actions: [
             IconButton(
               icon: Icon(Icons.add),
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute<void>(
-                  builder: (BuildContext context) => AddCategory(),
-                  fullscreenDialog: true,
-                ),
+              onPressed: () => showDialog(
+                context: context,
+                builder: (context) => CategoryDialog(),
               ),
             ),
             IconButton(

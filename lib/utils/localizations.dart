@@ -31,6 +31,7 @@ class MyFinanceLocalizations {
       'failed': 'Failed, please try again later',
       'settings': 'Settings',
       'new_category': 'New category',
+      'edit_category': 'Edit category',
       'name': 'Name',
       'category_name': 'Category name',
       'shared_user': 'Share with user',
@@ -49,7 +50,18 @@ class MyFinanceLocalizations {
       'payer_condition': 'Payer must be set',
       'add': 'Add',
       'payer': 'Payer',
+      'update': 'Update',
       'write_rights_required': 'You need at least write permissions',
+      'owner_rights_required': 'You have to be the owner of the category',
+      'delete_category': 'Delete category',
+      'delete_category_confirmation': 'Do you really want do delete the category?',
+      'delete_payment': 'Delete payment',
+      'delete_payment_confirmation': 'Do you really want do delete the payment?',
+      'yes': 'Yes',
+      'no': 'No',
+      'edit_payment': 'Edit payment',
+      'revenue': 'Revenue',
+      'expense': 'Expense',
     },
     'de': {
       'title': 'MyFinance',
@@ -71,6 +83,8 @@ class MyFinanceLocalizations {
       'settings': 'Einstellungen',
       'name': 'Name',
       'category_name': 'Kategorie Name',
+      'new_category': 'Neue Kategorie',
+      'edit_category': 'Kategorie bearbeiten',
       'shared_user': 'Mit Nutzern teilen',
       'no_categories': 'Noch keine Kategorien',
       'username_does_not_exist': 'Nutzername gibt es nicht',
@@ -88,6 +102,17 @@ class MyFinanceLocalizations {
       'add': 'Hinzufügen',
       'payer': 'Zahler',
       'write_rights_required': 'Sie benötigen mindestens Schreibrechte',
+      'owner_rights_required': 'Sie müssen der Inhaber der Kategorie sein',
+      'update': 'Aktualisieren',
+      'delete_payment': 'Zahlung löschen',
+      'delete_payment_confirmation': 'Möchten Sie die Zahlung wirklich löschen?',
+      'delete_category': 'Kategorie löschen',
+      'delete_category_confirmation': 'Möchten Sie die Kategorie wirklich löschen?',
+      'yes': 'Ja',
+      'no': 'Nein',
+      'edit_payment': 'Zahlung bearbeiten',
+      'revenue': 'Einzahlung',
+      'expanse': 'Ausgabe',
     },
   };
 
@@ -102,6 +127,8 @@ class MyFinanceLocalizations {
   String get usernameLengthCondition => _locals['username_length_condition'];
   String get usernameCharacterCondition => _locals['username_character_condition'];
   String get back => _locals['back'];
+  String get yes => _locals['yes'];
+  String get no => _locals['no'];
   String get username => _locals['username'];
   String get password => _locals['password'];
   String get passwordValidation => _locals['password_validation'];
@@ -123,7 +150,9 @@ class MyFinanceLocalizations {
   String get amount => _locals['amount'];
   String get date => _locals['date'];
   String get addPayment => _locals['add_payment'];
+  String get editPayment => _locals['edit_payment'];
   String get add => _locals['add'];
+  String get update => _locals['update'];
   String get pendingInvoices => _locals['pending_invoices'];
   String get nameCondition => _locals['name_condition'];
   String get amountCondition => _locals['amount_condition'];
@@ -131,6 +160,14 @@ class MyFinanceLocalizations {
   String get payerCondition => _locals['payer_condition'];
   String get payer => _locals['payer'];
   String get writeRightsRequired => _locals['write_rights_required'];
+  String get ownerRightsRequired => _locals['owner_rights_required'];
+  String get editCategory => _locals['edit_category'];
+  String get deleteCategory => _locals['delete_category'];
+  String get deletePayment => _locals['delete_payment'];
+  String get deleteCategoryConfirmation => _locals['delete_category_confirmation'];
+  String get deletePaymentConfirmation => _locals['delete_payment_confirmation'];
+  String get revenue => _locals['revenue'];
+  String get expense => _locals['expense'];
 }
 
 class MyFinanceLocalizationsDelegate extends LocalizationsDelegate<MyFinanceLocalizations> {

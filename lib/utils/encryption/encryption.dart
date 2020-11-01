@@ -1,5 +1,5 @@
-
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:encrypt/encrypt.dart';
 
@@ -8,7 +8,8 @@ enum Encoding {
   base64,
 }
 
-Key getKey(String key, Encoding encoding) => encoding == Encoding.base16 ? Key.fromBase16(key) : Key.fromBase64(key);
+Key getKey(String key, Encoding encoding) =>
+    encoding == Encoding.base16 ? Key.fromBase16(key) : Key.fromBase64(key);
 
 String encrypt(String key, Encoding keyEncoding, String text) {
   final _key = getKey(key, keyEncoding);
@@ -25,4 +26,9 @@ String decrypt(String key, Encoding keyEncoding, String text) {
   final encrypted = Encrypted.fromBase16(text);
   final msg = encryptor.decrypt(encrypted, iv: iv);
   return msg;
+}
+
+String createCryptoRandomString([int length = 32]) {
+  var values = List<int>.generate(length, (i) => Random.secure().nextInt(256));
+  return base64Url.encode(values);
 }
