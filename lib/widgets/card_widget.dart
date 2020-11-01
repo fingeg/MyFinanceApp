@@ -6,12 +6,14 @@ class CardWidget extends StatelessWidget {
   final double amount;
   final List<SubInfo> subInfo;
   final void Function() onTap;
+  final void Function() onLongPress;
 
   const CardWidget({
     @required this.subInfo,
     @required this.title,
     this.id,
     this.onTap,
+    this.onLongPress,
     this.amount,
     Key key,
   }) : super(key: key);
@@ -24,6 +26,7 @@ class CardWidget extends StatelessWidget {
         color: Theme.of(context).primaryColor,
         child: InkWell(
           onTap: onTap,
+          onLongPress: onLongPress,
           borderRadius: BorderRadius.all(Radius.circular(3)),
           child: Container(
             width: double.infinity,

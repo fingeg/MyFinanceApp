@@ -22,6 +22,7 @@ class CategoryWidget extends StatelessWidget {
       }).toList(),
       onTap: () => Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => CategoryPage(category: category))),
+      onLongPress: () => null,
     );
   }
 }

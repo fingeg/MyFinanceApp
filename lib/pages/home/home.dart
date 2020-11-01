@@ -26,7 +26,7 @@ class _HomePageState extends Interactor<HomePage> {
   Subscription subscribeEvents(EventBus eventBus) =>
       eventBus.respond<LoadingStatusChangedEvent>((event) {
         if (event.key == Keys.categories) setState(() => null);
-      });
+      }).respond<UpdateDataEvent>((event) => loadData());
 
   bool get _isLoading => Static.loading.isLoading([Keys.categories]);
 
@@ -144,7 +144,8 @@ class _HomePageState extends Interactor<HomePage> {
                         child: Column(
                           children: [
                             Icon(Icons.info_outline),
-                            Text(MyFinanceLocalizations.of(context).noCategories),
+                            Text(MyFinanceLocalizations.of(context)
+                                .noCategories),
                           ],
                         ),
                       ),

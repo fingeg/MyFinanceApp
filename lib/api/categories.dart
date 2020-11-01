@@ -8,6 +8,7 @@ import 'package:myfinance_app/utils/static.dart';
 
 class CategoriesHandler {
   static Future<ApiResponse<List<Category>>> _loadingProcess;
+  static List<Category> loadedCategories;
 
   List<Category> _jsonParser(Map<String, dynamic> json, String rsaPrivateKey) =>
       json['categories']
@@ -42,6 +43,7 @@ class CategoriesHandler {
     // Save data
     if (result.statusCode == StatusCode.success) {
       Static.storage.setString(Keys.categories, result.rawData);
+      loadedCategories = result.data;
     }
 
     return result;
@@ -56,6 +58,7 @@ class CategoriesHandler {
           Keys.categories, rawData, (json) => _jsonParser(json, rsaPrivateKey));
 
       if (res.statusCode == StatusCode.success) {
+        loadedCategories = res.data;
         return res.data;
       }
       print('Failed to parse ${Keys.categories} offline data');

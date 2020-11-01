@@ -96,7 +96,9 @@ class Payment {
       Payment(
         json['id'],
         decrypt(categoryKey, Encoding.base64, json['name']),
-        decrypt(categoryKey, Encoding.base64, json['description']),
+        (json['description'] as String).isNotEmpty
+            ? decrypt(categoryKey, Encoding.base64, json['description'])
+            : '',
         json['categoryID'],
         double.parse(decrypt(categoryKey, Encoding.base64, json['amount'])),
         DateTime.parse(json['date']),
@@ -108,7 +110,9 @@ class Payment {
     return {
       'id': id,
       'name': encrypt(categoryKey, Encoding.base64, name),
-      'description': encrypt(categoryKey, Encoding.base64, description),
+      'description': description.isNotEmpty
+          ? encrypt(categoryKey, Encoding.base64, description)
+          : '',
       'categoryID': categoryID,
       'amount': encrypt(categoryKey, Encoding.base64, amount.toString()),
       'date': date.toIso8601String(),

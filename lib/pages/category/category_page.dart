@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_event_bus/flutter_event_bus.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:myfinance_app/api/categories.dart';
 import 'package:myfinance_app/pages/category/add_payment_dialog.dart';
+import 'package:myfinance_app/utils/events.dart';
+import 'package:myfinance_app/utils/keys.dart';
 import 'package:myfinance_app/utils/localizations.dart';
 import 'package:myfinance_app/utils/models.dart';
+import 'package:myfinance_app/utils/static.dart';
+import 'package:myfinance_app/widgets/custom_table.dart';
 
 class CategoryPage extends StatefulWidget {
   final Category category;
@@ -13,22 +19,44 @@ class CategoryPage extends StatefulWidget {
   _CategoryPageState createState() => _CategoryPageState();
 }
 
-class _CategoryPageState extends State<CategoryPage> {
+class _CategoryPageState extends Interactor<CategoryPage> {
+  @override
+  Subscription subscribeEvents(EventBus eventBus) =>
+      eventBus.respond<LoadingStatusChangedEvent>((event) {
+        final newCategory = CategoriesHandler.loadedCategories
+            .where((c) => c.id == category.id);
+        if (newCategory.length == 1) {
+          if (event.key == Keys.categories)
+            setState(() => category = newCategory.single);
+        } else {
+          Navigator.pop(context);
+        }
+      });
+
+  bool get _isLoading => Static.loading.isLoading([Keys.categories]);
+  Category category;
+
+  @override
+  void initState() {
+    category = widget.category;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final amount = widget.category.amount;
-    final payers = widget.category
+    final amount = category.amount;
+    final payers = category
         .getAllPayers()
-        .map((p) => _TableRow(p, widget.category.getAmountForPerson(p)))
+        .map((p) => _TableRow<String>(p, category.getAmountForPerson(p), p))
         .toList();
 
-    final payments = widget.category.payments
+    final payments = category.payments
         .where((p) => !p.payed)
-        .map((p) => _TableRow(p.name, p.amount, p.description))
+        .map((p) => _TableRow<Payment>(p.name, p.amount, p))
         .toList();
 
-    final pendingInvoices = widget.category.splits
-        .map((p) => _TableRow(p.username, amount * p.share))
+    final pendingInvoices = category.splits
+        .map((p) => _TableRow<String>(p.username, amount * p.share, p.username))
         .toList();
 
     if (payers.isEmpty) {
@@ -44,9 +72,9 @@ class _CategoryPageState extends State<CategoryPage> {
     return Scaffold(
       appBar: AppBar(
         title: Hero(
-          tag: '${widget.category.id}-title',
+          tag: '${category.id}-title',
           child: Text(
-            widget.category.name,
+            category.name,
             style: Theme.of(context).textTheme.headline1,
           ),
         ),
@@ -62,84 +90,108 @@ class _CategoryPageState extends State<CategoryPage> {
           ),
         ],
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(40),
-          child: Container(
-            padding: const EdgeInsets.only(left: 15),
-            height: 40,
-            decoration: BoxDecoration(
-              border: Border(
-                top: BorderSide(
-                  color:
-                      Theme.of(context).textTheme.headline1.color.withAlpha(50),
-                  width: 0.2,
+          preferredSize: Size.fromHeight(43),
+          child: Column(
+            children: [
+              AnimatedOpacity(
+                duration: Duration(milliseconds: 200),
+                opacity: _isLoading ? 1 : 0,
+                child: SizedBox(
+                  height: 3,
+                  child: LinearProgressIndicator(
+                    backgroundColor: Theme.of(context).primaryColor,
+                  ),
                 ),
               ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: Tooltip(
-                    message: widget.category.description,
-                    child: Text(
-                      widget.category.description,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.subtitle1,
+              Container(
+                padding: const EdgeInsets.only(left: 15),
+                height: 40,
+                decoration: BoxDecoration(
+                  border: Border(
+                    top: BorderSide(
+                      color: Theme.of(context)
+                          .textTheme
+                          .headline1
+                          .color
+                          .withAlpha(50),
+                      width: 0.2,
                     ),
                   ),
                 ),
-                IconButton(
-                  icon: Icon(LineIcons.plus),
-                  color: Theme.of(context).textTheme.subtitle1.color,
-                  onPressed: () => showDialog(
-                    context: context,
-                    builder: (context) =>
-                        AddPaymentDialog(category: widget.category),
-                  ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Tooltip(
+                        message: category.description,
+                        child: Text(
+                          category.description,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.subtitle1,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(LineIcons.plus),
+                      color: Theme.of(context).textTheme.subtitle1.color,
+                      onPressed: () => showDialog(
+                        context: context,
+                        builder: (context) =>
+                            AddPaymentDialog(category: category),
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(LineIcons.pencil),
+                      color: Theme.of(context).textTheme.subtitle1.color,
+                      onPressed: () => null,
+                    ),
+                  ],
                 ),
-                IconButton(
-                  icon: Icon(LineIcons.pencil),
-                  color: Theme.of(context).textTheme.subtitle1.color,
-                  onPressed: () => null,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            children: [
-              if (widget.category.isSplit)
-                CardTable(
-                  header: MyFinanceLocalizations.of(context).pendingInvoices,
-                  rows: payers,
-                ),
-              CardTable(
-                header: MyFinanceLocalizations.of(context).payers,
-                rows: payers,
-              ),
-              CardTable(
-                header: MyFinanceLocalizations.of(context).payments,
-                rows: payments,
               ),
             ],
           ),
+        ),
+      ),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          EventBus.of(context).publish(UpdateDataEvent());
+          await Future.delayed(Duration(milliseconds: 500));
+        },
+        child: ListView(
+          padding: const EdgeInsets.all(10),
+          children: [
+            if (category.isSplit)
+              CardTable<String>(
+                header: MyFinanceLocalizations.of(context).pendingInvoices,
+                rows: payers,
+                onTap: (row) => null,
+              ),
+            CardTable<String>(
+              header: MyFinanceLocalizations.of(context).payers,
+              rows: payers,
+              onTap: (row) => null,
+            ),
+            CardTable<Payment>(
+              header: MyFinanceLocalizations.of(context).payments,
+              rows: payments,
+              onTap: (row) => null,
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-class CardTable extends StatelessWidget {
+class CardTable<T> extends StatelessWidget {
   final String header;
-  final List<_TableRow> rows;
+  final List<_TableRow<T>> rows;
+  final void Function(CustomTableRow<T> row) onTap;
 
-  const CardTable({Key key, this.header, this.rows}) : super(key: key);
+  const CardTable({Key key, this.header, this.rows, this.onTap})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -149,62 +201,25 @@ class CardTable extends StatelessWidget {
         color: Theme.of(context).primaryColor,
         child: Padding(
           padding: const EdgeInsets.all(10),
-          child: Table(
-            columnWidths: {0: FlexColumnWidth(1), 1: FixedColumnWidth(100)},
-            border: TableBorder(
-              verticalInside: BorderSide(
-                color: Theme.of(context).textTheme.headline1.color,
-                width: 0.3,
-              ),
+          child: CustomTable<T>(
+            columnsAligns: [TextAlign.start, TextAlign.end],
+            columnsWidths: [7, 4],
+            onTap: onTap,
+            header: CustomTableRow(
+              columns: [
+                header,
+                MyFinanceLocalizations.of(context).amount,
+              ],
             ),
-            children: [
-              TableRow(
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
-                      color: Theme.of(context).textTheme.headline1.color,
-                      width: 0.3,
-                    ),
-                  ),
-                ),
-                children: [
-                  Text(
-                    header,
-                    style: Theme.of(context).textTheme.bodyText1,
-                  ),
-                  Text(
-                    MyFinanceLocalizations.of(context).amount,
-                    textAlign: TextAlign.end,
-                    style: Theme.of(context).textTheme.bodyText1,
-                  ),
-                ],
-              ),
-              ...rows
-                  .map(
-                    (row) => TableRow(
-                      children: [
-                        row.description != null
-                            ? Tooltip(
-                                message: row.description ?? '',
-                                child: Text(
-                                  row.name,
-                                  style: Theme.of(context).textTheme.bodyText1,
-                                ),
-                              )
-                            : Text(
-                                row.name,
-                                style: Theme.of(context).textTheme.bodyText1,
-                              ),
-                        Text(
-                          '${row.amount < 0 ? '-' : '+'} ${row.amount.toStringAsFixed(2).replaceAll('-', '')}€',
-                          textAlign: TextAlign.end,
-                          style: Theme.of(context).textTheme.bodyText1,
-                        ),
+            rows: rows
+                .map((row) => CustomTableRow<T>(
+                      columns: [
+                        row.name,
+                        '${row.amount < 0 ? '-' : '+'} ${row.amount.toStringAsFixed(2).replaceAll('-', '')}€',
                       ],
-                    ),
-                  )
-                  .toList(),
-            ],
+                      metadata: row.metadata,
+                    ))
+                .toList(),
           ),
         ),
       ),
@@ -212,10 +227,10 @@ class CardTable extends StatelessWidget {
   }
 }
 
-class _TableRow {
+class _TableRow<T> {
   final String name;
   final double amount;
-  final String description;
+  final T metadata;
 
-  _TableRow(this.name, this.amount, [this.description]);
+  _TableRow(this.name, this.amount, [this.metadata]);
 }

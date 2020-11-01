@@ -3,3 +3,5 @@ class LoadingStatusChangedEvent {
 
   LoadingStatusChangedEvent(this.key);
 }
+
+class UpdateDataEvent {}

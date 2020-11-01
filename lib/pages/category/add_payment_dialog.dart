@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:myfinance_app/api/payments.dart';
+import 'package:myfinance_app/utils/events.dart';
 import 'package:myfinance_app/utils/keys.dart';
 import 'package:myfinance_app/utils/localizations.dart';
 import 'package:myfinance_app/utils/models.dart';
@@ -71,6 +72,7 @@ class _AddPaymentDialogState extends State<AddPaymentDialog> {
       }
 
       if (res.statusCode == StatusCode.success && mounted) {
+        eventBus.publish(UpdateDataEvent());
         Navigator.of(context).pop();
       } else if (res.statusCode == StatusCode.unauthorized) {
         Navigator.of(context).popAndPushNamed('/login');
