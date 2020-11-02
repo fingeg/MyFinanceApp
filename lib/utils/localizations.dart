@@ -62,6 +62,14 @@ class MyFinanceLocalizations {
       'edit_payment': 'Edit payment',
       'revenue': 'Revenue',
       'expense': 'Expense',
+      'splits': 'Split of the bill',
+      'add_payer': 'Add person',
+      'add_new_payer': 'Add new person',
+      'name_or_username': 'Name/Username',
+      'share': 'Share (%)',
+      'percent_condition': 'The number has to be between 0 and 100',
+      'me': 'Me',
+      'split_name_condition': 'The user already has a share of the bill',
     },
     'de': {
       'title': 'MyFinance',
@@ -113,6 +121,14 @@ class MyFinanceLocalizations {
       'edit_payment': 'Zahlung bearbeiten',
       'revenue': 'Einzahlung',
       'expanse': 'Ausgabe',
+      'splits': 'Aufteilung der Rechnung',
+      'add_payer': 'Person hinzufügen',
+      'add_new_payer': 'Neue Person hinzufügen',
+      'name_or_username': 'Name/Benutzername',
+      'share': 'Anteil (%)',
+      'me': 'Ich',
+      'percent_condition': 'Die zahl muss zwischen 0 und 100 sein',
+      'split_name_condition': 'Der Nutzer trägt schon einen Teil der Rechnung',
     },
   };
 
@@ -155,6 +171,7 @@ class MyFinanceLocalizations {
   String get update => _locals['update'];
   String get pendingInvoices => _locals['pending_invoices'];
   String get nameCondition => _locals['name_condition'];
+  String get splitNameCondition => _locals['split_name_condition'];
   String get amountCondition => _locals['amount_condition'];
   String get dateCondition => _locals['date_condition'];
   String get payerCondition => _locals['payer_condition'];
@@ -168,6 +185,13 @@ class MyFinanceLocalizations {
   String get deletePaymentConfirmation => _locals['delete_payment_confirmation'];
   String get revenue => _locals['revenue'];
   String get expense => _locals['expense'];
+  String get splits => _locals['splits'];
+  String get addPayer => _locals['add_payer'];
+  String get addNewPayer => _locals['add_new_payer'];
+  String get nameOrUsername => _locals['name_or_username'];
+  String get share => _locals['share'];
+  String get percentCondition => _locals['percent_condition'];
+  String get me => _locals['me'];
 }
 
 class MyFinanceLocalizationsDelegate extends LocalizationsDelegate<MyFinanceLocalizations> {

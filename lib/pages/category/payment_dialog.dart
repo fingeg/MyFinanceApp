@@ -203,39 +203,41 @@ class _PaymentDialogState extends State<PaymentDialog> {
                           },
                           onEditingComplete: _dateFocus.nextFocus,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Radio(
-                              value: true,
-                              groupValue: isExpense,
-                              onChanged: (value) =>
-                                  setState(() => isExpense = value),
-                            ),
-                            InkWell(
-                              onTap: () => setState(() => isExpense = true),
-                              highlightColor: Colors.transparent,
-                              splashColor: Colors.transparent,
-                              child: Text(
-                                  MyFinanceLocalizations.of(context).expense),
-                            ),
-                            Container(
-                              width: 20,
-                            ),
-                            Radio(
-                              value: false,
-                              groupValue: isExpense,
-                              onChanged: (value) =>
-                                  setState(() => isExpense = value),
-                            ),
-                            InkWell(
-                              onTap: () => setState(() => isExpense = false),
-                              highlightColor: Colors.transparent,
-                              splashColor: Colors.transparent,
-                              child: Text(
-                                  MyFinanceLocalizations.of(context).revenue),
-                            ),
-                          ],
+                        Theme(
+                          data: Theme.of(context).copyWith(
+                            highlightColor: Colors.transparent,
+                            splashColor: Colors.transparent,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Radio(
+                                value: true,
+                                groupValue: isExpense,
+                                onChanged: (value) =>
+                                    setState(() => isExpense = value),
+                              ),
+                              InkWell(
+                                onTap: () => setState(() => isExpense = true),
+                                child: Text(
+                                    MyFinanceLocalizations.of(context).expense),
+                              ),
+                              Container(
+                                width: 20,
+                              ),
+                              Radio(
+                                value: false,
+                                groupValue: isExpense,
+                                onChanged: (value) =>
+                                    setState(() => isExpense = value),
+                              ),
+                              InkWell(
+                                onTap: () => setState(() => isExpense = false),
+                                child: Text(
+                                    MyFinanceLocalizations.of(context).revenue),
+                              ),
+                            ],
+                          ),
                         ),
                         TextFormField(
                           controller: _dateController,

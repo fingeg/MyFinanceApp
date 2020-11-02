@@ -57,7 +57,7 @@ class _CategoryPageState extends Interactor<CategoryPage> {
         .toList();
 
     final pendingInvoices = category.splits
-        .map((p) => _TableRow<String>(p.username, amount * p.share, p.username))
+        .map((p) => _TableRow<String>(p.username, amount * p.share * -1, p.username))
         .toList();
 
     if (payers.isEmpty) {
@@ -172,7 +172,7 @@ class _CategoryPageState extends Interactor<CategoryPage> {
             if (category.isSplit)
               CardTable<String>(
                 header: MyFinanceLocalizations.of(context).pendingInvoices,
-                rows: payers,
+                rows: pendingInvoices,
                 onTap: (row) => null,
               ),
             CardTable<String>(

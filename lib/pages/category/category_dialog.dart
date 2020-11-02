@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_event_bus/flutter_event_bus.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:myfinance_app/api/categories.dart';
+import 'package:myfinance_app/pages/category/split_dialog.dart';
 import 'package:myfinance_app/utils/encryption/encryption.dart';
 import 'package:myfinance_app/utils/events.dart';
 import 'package:myfinance_app/utils/localizations.dart';
@@ -27,6 +29,8 @@ class _CategoryDialogState extends State<CategoryDialog> {
 
   final _descriptionFocus = FocusNode();
 
+  List<Split> splits = [];
+
   bool _loading = false;
   String _errorMsg = '';
 
@@ -35,6 +39,7 @@ class _CategoryDialogState extends State<CategoryDialog> {
     if (widget.category != null) {
       _nameController.text = widget.category.name;
       _descriptionController.text = widget.category.description;
+      splits = [...widget.category.splits];
     }
 
     super.initState();
@@ -51,7 +56,7 @@ class _CategoryDialogState extends State<CategoryDialog> {
         _descriptionController.text,
         widget.category?.permission ?? Permission.owner,
         [],
-        [],
+        splits,
         widget.category?.encryptionKey ?? createCryptoRandomString(),
       );
 
@@ -96,6 +101,16 @@ class _CategoryDialogState extends State<CategoryDialog> {
     if (mounted) setState(() => null);
   }
 
+  void editSplits() async {
+    final splits = await showDialog<List<Split>>(
+      context: context,
+      builder: (context) => SplitDialog(splits: [...this.splits]),
+    );
+    if (splits != null) {
+      setState(() => this.splits = splits);
+    }
+  }
+
   @override
   Widget build(BuildContext context) => SimpleDialog(
         title: Text(widget.category == null
@@ -138,6 +153,67 @@ class _CategoryDialogState extends State<CategoryDialog> {
                           ),
                           focusNode: _descriptionFocus,
                         ),
+                        Padding(
+                            padding: const EdgeInsets.only(top: 20, bottom: 10),
+                            child: Table(
+                              defaultVerticalAlignment:
+                                  TableCellVerticalAlignment.middle,
+                              border: TableBorder(
+                                verticalInside: BorderSide(
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1
+                                      .color,
+                                  width: 0.3,
+                                ),
+                              ),
+                              columnWidths: {
+                                1: FixedColumnWidth(60),
+                              },
+                              children: [
+                                TableRow(
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      bottom: BorderSide(
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1
+                                            .color,
+                                        width: 0.3,
+                                      ),
+                                    ),
+                                  ),
+                                  children: [
+                                    Text(MyFinanceLocalizations.of(context)
+                                        .splits),
+                                    Padding(
+                                      padding: const EdgeInsets.only(bottom: 5),
+                                      child: SizedBox(
+                                        width: 30,
+                                        height: 30,
+                                        child: IconButton(
+                                          visualDensity: VisualDensity.compact,
+                                          icon: Icon(LineIcons.pencil),
+                                          onPressed: editSplits,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                ...splits.map((split) => TableRow(children: [
+                                      Text(split.username),
+                                      Center(
+                                        child: Text(
+                                            '${(split.share * 100).toInt().toString()}%'),
+                                      )
+                                    ])),
+                                if (splits.isEmpty)
+                                  TableRow(children: [
+                                    Text('-'),
+                                    Center(child: Text('-')),
+                                  ])
+                              ],
+                            )),
                         if (widget.category != null)
                           DeleteButton(
                             text: MyFinanceLocalizations.of(context)

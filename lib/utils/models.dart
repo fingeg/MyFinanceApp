@@ -33,7 +33,9 @@ class Category {
     return Category(
       json['id'],
       decrypt(decryptedKey, Encoding.base64, json['name']),
-      decrypt(decryptedKey, Encoding.base64, json['description']),
+      (json['description'] as String).isNotEmpty
+          ? decrypt(decryptedKey, Encoding.base64, json['description'])
+          : '',
       Permission.values[json['permission']],
       json['payments']
           .map<Payment>((json) => Payment.fromEncryptedJson(json, decryptedKey))
@@ -50,7 +52,9 @@ class Category {
     return {
       'id': id,
       'name': encrypt(encryptionKey, Encoding.base64, name),
-      'description': encrypt(encryptionKey, Encoding.base64, description),
+      'description': description.isNotEmpty
+          ? encrypt(encryptionKey, Encoding.base64, description)
+          : '',
       'permission': permission.index,
       'payments':
           payments.map((p) => p.toEncryptedJson(encryptionKey)).toList(),
@@ -147,7 +151,8 @@ class Split {
 
   factory Split.fromJson(Map<String, dynamic> json) => Split(
         json['username'],
-        json['share'],
+        json['share'] *
+            1.0, // The multiplication is for the conversion to double
         json['isPlatformUser'],
       );
 

@@ -19,7 +19,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends Interactor<HomePage> {
   final storage = FlutterSecureStorage();
   final _categoryHandler = CategoriesHandler();
-  final _scaffoldKey = GlobalKey();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   List<Category> categories;
 
   @override
@@ -51,13 +51,13 @@ class _HomePageState extends Interactor<HomePage> {
       if (mounted) setState(() => categories = res.data);
     } else if (res.statusCode == StatusCode.offline) {
       if (mounted)
-        (_scaffoldKey.currentState as ScaffoldState).showSnackBar(SnackBar(
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
             content: Text(MyFinanceLocalizations.of(context).offlineMsg)));
     } else if (res.statusCode == StatusCode.unauthorized) {
       Navigator.of(context).pushReplacementNamed('/login');
     } else {
       if (mounted)
-        (_scaffoldKey.currentState as ScaffoldState).showSnackBar(
+        _scaffoldKey.currentState.showSnackBar(
             SnackBar(content: Text(MyFinanceLocalizations.of(context).failed)));
     }
   }

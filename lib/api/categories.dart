@@ -5,10 +5,33 @@ import 'package:myfinance_app/utils/keys.dart';
 import 'package:myfinance_app/utils/models.dart';
 import 'package:myfinance_app/utils/network.dart';
 import 'package:myfinance_app/utils/static.dart';
+import 'package:myfinance_app/utils/utils.dart';
 
 class CategoriesHandler {
   static Future<ApiResponse<List<Category>>> _loadingProcess;
   static List<Category> loadedCategories;
+
+  static List<String> getUsedNames() => loadedCategories
+      .map((category) {
+        // Get all names from the splits
+        final splitNames = category.splits
+            .map((split) => split.username.trim().toLowerCase())
+            .toList();
+
+        // Get ll names from the payments
+        final paymentNames = category.payments
+            .map((payment) => payment.payer.trim().toLowerCase())
+            .toList();
+
+        return [...splitNames, ...paymentNames];
+      })
+      // Reduce to one list
+      .reduce((v1, v2) => [...v1, ...v2])
+      // The first letter of a name in upper case
+      .map((name) => nameCaseCorrection(name))
+      // Remove double names
+      .toSet()
+      .toList();
 
   List<Category> _jsonParser(Map<String, dynamic> json, String rsaPrivateKey) =>
       json['categories']
@@ -76,7 +99,7 @@ class CategoriesHandler {
         await Static.storage.getSensitiveString(Keys.rsaPublicKey);
     return request<_CategoryResponse>(
       '/category',
-      category.id == null ? HttpMethod.POST : HttpMethod.PUT,
+      HttpMethod.POST,
       authentication: auth,
       data: category.toEncryptedJson(rsaPublicKey),
       jsonParser: (json) => _CategoryResponse.fromJson(json),
@@ -84,8 +107,7 @@ class CategoriesHandler {
   }
 
   /// Deletes a category
-  Future<ApiResponse<bool>> deleteCategory(
-      Category category) async {
+  Future<ApiResponse<bool>> deleteCategory(Category category) async {
     final auth = await AuthenticationHandler.getAuthentication();
     return request<bool>(
       '/category',
