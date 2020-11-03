@@ -1,5 +1,5 @@
 String nameCaseCorrection(String name) =>
-    name.toLowerCase().split(' ').map((name) {
+    name.trim().toLowerCase().split(' ').map((name) {
       if (name.isNotEmpty) {
         if (name.length == 1) {
           return name.toUpperCase();

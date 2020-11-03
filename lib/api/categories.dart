@@ -11,7 +11,21 @@ class CategoriesHandler {
   static Future<ApiResponse<List<Category>>> _loadingProcess;
   static List<Category> loadedCategories;
 
-  static List<String> getUsedNames() => loadedCategories
+  static List<Person> get loadedPersons =>
+      getUsedNames(onlyBills: true).map((name) => Person(
+            name: name,
+            categories: loadedCategories
+                .where((category) =>
+                    category.splits
+                        .where((split) =>
+                            split.username.trim().toLowerCase() ==
+                            name.trim().toLowerCase())
+                        .length >
+                    0)
+                .toList(),
+          )).toList();
+
+  static List<String> getUsedNames({onlyBills = false}) => loadedCategories
       .map((category) {
         // Get all names from the splits
         final splitNames = category.splits
@@ -19,11 +33,14 @@ class CategoriesHandler {
             .toList();
 
         // Get ll names from the payments
-        final paymentNames = category.payments
-            .map((payment) => payment.payer.trim().toLowerCase())
-            .toList();
+        if (!onlyBills) {
+          final paymentNames = category.payments
+              .map((payment) => payment.payer.trim().toLowerCase())
+              .toList();
 
-        return [...splitNames, ...paymentNames];
+          return [...splitNames, ...paymentNames];
+        }
+        return splitNames;
       })
       // Reduce to one list
       .reduce((v1, v2) => [...v1, ...v2])

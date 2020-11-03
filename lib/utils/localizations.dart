@@ -69,6 +69,7 @@ class MyFinanceLocalizations {
       'share': 'Share (%)',
       'percent_condition': 'The number has to be between 0 and 100',
       'me': 'Me',
+      'no_persons': 'No persons yet',
       'split_name_condition': 'The user already has a share of the bill',
     },
     'de': {
@@ -127,6 +128,7 @@ class MyFinanceLocalizations {
       'name_or_username': 'Name/Benutzername',
       'share': 'Anteil (%)',
       'me': 'Ich',
+      'no_persons': 'Bisher keine Personen eingetragen',
       'percent_condition': 'Die zahl muss zwischen 0 und 100 sein',
       'split_name_condition': 'Der Nutzer trägt schon einen Teil der Rechnung',
     },
@@ -161,6 +163,7 @@ class MyFinanceLocalizations {
   String get categoryName => _locals['category_name'];
   String get sharedUser => _locals['shared_user'];
   String get noCategories => _locals['no_categories'];
+  String get noPersons => _locals['no_persons'];
   String get payers => _locals['payers'];
   String get payments => _locals['payments'];
   String get amount => _locals['amount'];

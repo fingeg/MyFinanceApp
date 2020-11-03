@@ -10,6 +10,7 @@ import 'package:myfinance_app/utils/models.dart';
 import 'package:myfinance_app/utils/network.dart';
 import 'package:myfinance_app/utils/static.dart';
 import 'package:myfinance_app/widgets/category_widget.dart';
+import 'package:myfinance_app/widgets/person_widget.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -21,6 +22,7 @@ class _HomePageState extends Interactor<HomePage> {
   final _categoryHandler = CategoriesHandler();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   List<Category> categories;
+  List<Person> persons;
 
   @override
   Subscription subscribeEvents(EventBus eventBus) =>
@@ -37,9 +39,11 @@ class _HomePageState extends Interactor<HomePage> {
     }
 
     final _categories = await _categoryHandler.loadOfflineCategories();
+    final _persons = CategoriesHandler.loadedPersons;
     if (mounted)
       setState(() {
         categories = _categories;
+        persons = _persons;
       });
 
     print('Download categories');
@@ -47,8 +51,13 @@ class _HomePageState extends Interactor<HomePage> {
         .loadCategories(EventBusWidget.of(context).eventBus);
 
     if (res.statusCode == StatusCode.success) {
+      final _persons = CategoriesHandler.loadedPersons;
       // Only if the widget is still in use
-      if (mounted) setState(() => categories = res.data);
+      if (mounted)
+        setState(() {
+          categories = res.data;
+          persons = _persons;
+        });
     } else if (res.statusCode == StatusCode.offline) {
       if (mounted)
         _scaffoldKey.currentState.showSnackBar(SnackBar(
@@ -134,7 +143,7 @@ class _HomePageState extends Interactor<HomePage> {
               },
               child: ListView(
                 children: [
-                  if ((categories ?? []).isEmpty)
+                  if (((index == 0 ? categories : persons) ?? []).isEmpty)
                     Padding(
                       padding: const EdgeInsets.all(30),
                       child: Center(
@@ -147,10 +156,14 @@ class _HomePageState extends Interactor<HomePage> {
                         ),
                       ),
                     )
-                  else
+                  else if (index == 0)
                     ...categories
                         .map((category) => CategoryWidget(category: category))
-                        .toList(),
+                        .toList()
+                  else if (index == 1)
+                    ...persons
+                        .map((person) => PersonWidget(person: person))
+                        .toList()
                 ],
               ),
             ),

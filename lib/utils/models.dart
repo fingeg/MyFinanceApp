@@ -1,8 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:myfinance_app/utils/encryption/encryption.dart';
 import 'package:myfinance_app/utils/encryption/rsa.dart';
-import 'package:myfinance_app/utils/keys.dart';
-import 'package:myfinance_app/utils/static.dart';
+import 'package:myfinance_app/utils/utils.dart';
 
+/// One category with all payments and splits
 class Category {
   final int id;
   final String name;
@@ -17,7 +18,7 @@ class Category {
 
   factory Category.fromJson(Map<String, dynamic> json) => Category(
         json['id'],
-        json['name'],
+        nameCaseCorrection(json['name']),
         json['description'],
         Permission.values[json['permission']],
         json['payments'].map((json) => Payment.fromJson(json)).toList(),
@@ -32,7 +33,7 @@ class Category {
     final decryptedKey = RsaHelper.decrypt(privateKey, encryptedKey);
     return Category(
       json['id'],
-      decrypt(decryptedKey, Encoding.base64, json['name']),
+      nameCaseCorrection(decrypt(decryptedKey, Encoding.base64, json['name'])),
       (json['description'] as String).isNotEmpty
           ? decrypt(decryptedKey, Encoding.base64, json['description'])
           : '',
@@ -74,6 +75,7 @@ class Category {
         : unpaidAmounts.reduce((v1, v2) => v1 + v2);
   }
 
+  // Returns the payed/invested amount for a user in a category
   double getAmountForPerson(String name) {
     final unpaidAmounts =
         payments.where((p) => !p.payed && p.payer == name).map((p) => p.amount);
@@ -83,10 +85,21 @@ class Category {
         : unpaidAmounts.reduce((v1, v2) => v1 + v2);
   }
 
+  // Returns the share of a bill of a given person
+  double getBillForPerson(String name) {
+    final split = splits.where((split) =>
+        split.username.trim().toLowerCase() == name.trim().toLowerCase());
+
+    if (split.length != 1) return null;
+
+    return amount * split.single.share;
+  }
+
   List<String> getAllPayers() =>
       payments.where((p) => !p.payed).map((p) => p.payer).toSet().toList();
 }
 
+/// One payment
 class Payment {
   int id;
   final String name;
@@ -122,7 +135,8 @@ class Payment {
         json['categoryID'],
         double.parse(decrypt(categoryKey, Encoding.base64, json['amount'])),
         DateTime.parse(json['date']),
-        decrypt(categoryKey, Encoding.base64, json['payer']),
+        nameCaseCorrection(
+            decrypt(categoryKey, Encoding.base64, json['payer'])),
         json['payed'] as bool,
       );
 
@@ -142,6 +156,9 @@ class Payment {
   }
 }
 
+/// One split
+///
+/// Describes the share of a user in a category bill
 class Split {
   final String username;
   final double share;
@@ -150,7 +167,7 @@ class Split {
   Split(this.username, this.share, this.isPlatformUser);
 
   factory Split.fromJson(Map<String, dynamic> json) => Split(
-        json['username'],
+        nameCaseCorrection(json['username']),
         json['share'] *
             1.0, // The multiplication is for the conversion to double
         json['isPlatformUser'],
@@ -165,4 +182,21 @@ class Split {
   }
 }
 
+/// The category permission
+///
+/// For requests, the enum has to be converted into an index
 enum Permission { read, readWrite, owner }
+
+/// This is the same data as in categories, but sorted by persons
+class Person {
+  final String name;
+  final List<Category> categories;
+
+  Person({this.name, this.categories});
+
+  double get amount => categories.isNotEmpty
+      ? categories
+          .map((c) => c.getBillForPerson(name))
+          .reduce((v1, v2) => v1 + v2)
+      : 0.0;
+}
