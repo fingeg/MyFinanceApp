@@ -112,6 +112,7 @@ class _AddSplitDialogState extends State<AddSplitDialog> {
             : name.replaceAll(_me, username),
         int.parse(_shareController.text) / 100,
         false,
+        DateTime.now(),
       );
       Navigator.of(context).pop(split);
     }

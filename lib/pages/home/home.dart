@@ -150,8 +150,13 @@ class _HomePageState extends Interactor<HomePage> {
                         child: Column(
                           children: [
                             Icon(Icons.info_outline),
-                            Text(MyFinanceLocalizations.of(context)
-                                .noCategories),
+                            Text(
+                              index == 0
+                                  ? MyFinanceLocalizations.of(context)
+                                      .noCategories
+                                  : MyFinanceLocalizations.of(context)
+                                      .noPersons,
+                            ),
                           ],
                         ),
                       ),

@@ -58,6 +58,7 @@ class _CategoryDialogState extends State<CategoryDialog> {
         [],
         splits,
         widget.category?.encryptionKey ?? createCryptoRandomString(),
+        DateTime.now(),
       );
 
       final handler = CategoriesHandler();

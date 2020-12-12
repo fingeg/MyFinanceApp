@@ -57,7 +57,7 @@ class _CategoryPageState extends Interactor<CategoryPage> {
         .toList();
 
     final pendingInvoices = category.splits
-        .map((p) => _TableRow<String>(p.username, amount * p.share * -1, p.username))
+        .map((p) => _TableRow<String>(p.username, amount * p.share, p.username))
         .toList();
 
     if (payers.isEmpty) {

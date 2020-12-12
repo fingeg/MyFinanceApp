@@ -11,10 +11,10 @@ class CategoriesHandler {
   static Future<ApiResponse<List<Category>>> _loadingProcess;
   static List<Category> loadedCategories;
 
-  static List<Person> get loadedPersons =>
-      getUsedNames(onlyBills: true).map((name) => Person(
+  static List<Person> get loadedPersons => getUsedNames(onlyBills: true)
+      .map((name) => Person(
             name: name,
-            categories: loadedCategories
+            categories: (loadedCategories ?? [])
                 .where((category) =>
                     category.splits
                         .where((split) =>
@@ -23,32 +23,36 @@ class CategoriesHandler {
                         .length >
                     0)
                 .toList(),
-          )).toList();
-
-  static List<String> getUsedNames({onlyBills = false}) => loadedCategories
-      .map((category) {
-        // Get all names from the splits
-        final splitNames = category.splits
-            .map((split) => split.username.trim().toLowerCase())
-            .toList();
-
-        // Get ll names from the payments
-        if (!onlyBills) {
-          final paymentNames = category.payments
-              .map((payment) => payment.payer.trim().toLowerCase())
-              .toList();
-
-          return [...splitNames, ...paymentNames];
-        }
-        return splitNames;
-      })
-      // Reduce to one list
-      .reduce((v1, v2) => [...v1, ...v2])
-      // The first letter of a name in upper case
-      .map((name) => nameCaseCorrection(name))
-      // Remove double names
-      .toSet()
+          ))
       .toList();
+
+  static List<String> getUsedNames({onlyBills = false}) =>
+      (loadedCategories ?? []).isNotEmpty
+          ? loadedCategories
+              .map((category) {
+                // Get all names from the splits
+                final splitNames = category.splits
+                    .map((split) => split.username.trim().toLowerCase())
+                    .toList();
+
+                // Get ll names from the payments
+                if (!onlyBills) {
+                  final paymentNames = category.payments
+                      .map((payment) => payment.payer.trim().toLowerCase())
+                      .toList();
+
+                  return [...splitNames, ...paymentNames];
+                }
+                return splitNames;
+              })
+              // Reduce to one list
+              .reduce((v1, v2) => [...v1, ...v2])
+              // The first letter of a name in upper case
+              .map((name) => nameCaseCorrection(name))
+              // Remove double names
+              .toSet()
+              .toList()
+          : [];
 
   List<Category> _jsonParser(Map<String, dynamic> json, String rsaPrivateKey) =>
       json['categories']

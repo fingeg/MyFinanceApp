@@ -11,7 +11,7 @@ class _DetailsPageState extends State<DetailsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Hero(
-          key: Key(''),
+          tag: Key(''),
           child: Text('Essen'),
         ),
       ),

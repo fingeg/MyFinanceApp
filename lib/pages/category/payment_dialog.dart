@@ -78,6 +78,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
         DateFormat('dd/MM/yyyy').parse(_dateController.text),
         _payerController.text,
         false,
+        DateTime.now(),
       );
 
       final handler = PaymentHandler();

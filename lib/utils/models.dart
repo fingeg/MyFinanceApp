@@ -13,8 +13,11 @@ class Category {
   final List<Split> splits;
   final String encryptionKey;
 
+  /// When the category was edited (This includes payments and splits)
+  final DateTime lastEdited;
+
   Category(this.id, this.name, this.description, this.permission, this.payments,
-      this.splits, this.encryptionKey);
+      this.splits, this.encryptionKey, this.lastEdited);
 
   factory Category.fromJson(Map<String, dynamic> json) => Category(
         json['id'],
@@ -24,6 +27,7 @@ class Category {
         json['payments'].map((json) => Payment.fromJson(json)).toList(),
         json['splits']?.map((json) => Split.fromJson(json))?.toList() ?? [],
         json['encryptionKey'],
+        DateTime.fromMillisecondsSinceEpoch(json['lastEdited']),
       );
 
   factory Category.fromEncryptedJson(
@@ -44,6 +48,7 @@ class Category {
       json['splits']?.map<Split>((json) => Split.fromJson(json))?.toList() ??
           [],
       decryptedKey,
+      DateTime.fromMillisecondsSinceEpoch(json['lastEdited']),
     );
   }
 
@@ -62,6 +67,7 @@ class Category {
       'splits': splits.map((s) => s.toJson()).toList(),
       'isSplit': splits.isNotEmpty,
       'encryptionKey': encryptedKey,
+      'lastEdited': lastEdited?.millisecondsSinceEpoch,
     };
   }
 
@@ -109,9 +115,10 @@ class Payment {
   final DateTime date;
   final String payer;
   final bool payed;
+  final DateTime lastEdited;
 
   Payment(this.id, this.name, this.description, this.categoryID, this.amount,
-      this.date, this.payer, this.payed);
+      this.date, this.payer, this.payed, this.lastEdited);
 
   factory Payment.fromJson(Map<String, dynamic> json) => Payment(
         json['id'],
@@ -122,6 +129,7 @@ class Payment {
         DateTime.parse(json['date']),
         json['payer'],
         json['payed'],
+        DateTime.fromMillisecondsSinceEpoch(json['lastEdited']),
       );
 
   factory Payment.fromEncryptedJson(
@@ -138,6 +146,7 @@ class Payment {
         nameCaseCorrection(
             decrypt(categoryKey, Encoding.base64, json['payer'])),
         json['payed'] as bool,
+        DateTime.fromMillisecondsSinceEpoch(json['lastEdited']),
       );
 
   Map<String, dynamic> toEncryptedJson(String categoryKey) {
@@ -152,6 +161,7 @@ class Payment {
       'date': date.toIso8601String(),
       'payer': encrypt(categoryKey, Encoding.base64, payer),
       'payed': payed,
+      'lastEdited': lastEdited?.millisecondsSinceEpoch,
     };
   }
 }
@@ -163,14 +173,16 @@ class Split {
   final String username;
   final double share;
   final bool isPlatformUser;
+  final DateTime lastEdited;
 
-  Split(this.username, this.share, this.isPlatformUser);
+  Split(this.username, this.share, this.isPlatformUser, this.lastEdited);
 
   factory Split.fromJson(Map<String, dynamic> json) => Split(
         nameCaseCorrection(json['username']),
         json['share'] *
             1.0, // The multiplication is for the conversion to double
         json['isPlatformUser'],
+        DateTime.fromMillisecondsSinceEpoch(json['lastEdited']),
       );
 
   Map<String, dynamic> toJson() {
@@ -178,6 +190,7 @@ class Split {
       'username': username,
       'share': share,
       'isPlatformUser': isPlatformUser,
+      'lastEdited': lastEdited?.millisecondsSinceEpoch
     };
   }
 }
