@@ -4,7 +4,6 @@ import 'package:line_icons/line_icons.dart';
 import 'package:myfinance_app/pages/category/add_split_dialog.dart';
 import 'package:myfinance_app/utils/localizations.dart';
 import 'package:myfinance_app/utils/models.dart';
-import 'package:myfinance_app/utils/utils.dart';
 
 class SplitDialog extends StatefulWidget {
   final List<Split> splits;
