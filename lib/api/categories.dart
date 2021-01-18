@@ -1,6 +1,5 @@
 import 'package:flutter_event_bus/flutter_event_bus.dart';
 import 'package:myfinance_app/api/authentication.dart';
-import 'package:myfinance_app/utils/events.dart';
 import 'package:myfinance_app/utils/keys.dart';
 import 'package:myfinance_app/utils/models.dart';
 import 'package:myfinance_app/utils/network.dart';

@@ -18,7 +18,7 @@ class SplitDialog extends StatefulWidget {
 class _SplitDialogState extends State<SplitDialog> {
   List<bool> selection = [];
 
-  void addSplit({Split cSplit, updateCurrent=false}) async {
+  void addSplit({Split cSplit, updateCurrent = false}) async {
     final split = await showDialog<Split>(
       context: context,
       builder: (context) => AddSplitDialog(
@@ -29,21 +29,31 @@ class _SplitDialogState extends State<SplitDialog> {
                 cSplit == null ||
                 name.toLowerCase() != cSplit.username.toLowerCase())
             .toList(),
-        currentPercentage: !updateCurrent ? [
-          0.0,
-          ...widget.splits
-              .where((split) =>
-                  cSplit == null ||
-                  split.username.toLowerCase() != cSplit.username.toLowerCase())
-              .map((split) => split.share),
-        ].reduce((v1, v2) => v1 + v2) : 0.5,
+        currentPercentage: !updateCurrent
+            ? [
+                0.0,
+                ...widget.splits
+                    .where((split) =>
+                        cSplit == null ||
+                        split.username.toLowerCase() !=
+                            cSplit.username.toLowerCase())
+                    .map((split) => split.share),
+              ].reduce((v1, v2) => v1 + v2)
+            : 0.5,
       ),
     );
 
     if (split != null) {
       setState(() {
         if (updateCurrent) {
-          widget.splits.single.share = 0.5;
+          final old = widget.splits.single;
+          widget.splits.clear();
+          widget.splits.add(Split(
+            old.username,
+            0.5,
+            old.isPlatformUser,
+            old.lastEdited,
+          ));
         }
         widget.splits.add(split);
         if (cSplit != null) {
@@ -71,7 +81,8 @@ class _SplitDialogState extends State<SplitDialog> {
           if (selection.where((v) => v).length == 1)
             IconButton(
               icon: Icon(LineIcons.pencil),
-              onPressed: () => addSplit(cSplit: widget.splits[selection.indexOf(true)]),
+              onPressed: () =>
+                  addSplit(cSplit: widget.splits[selection.indexOf(true)]),
             ),
           if (selection.isNotEmpty && selection.reduce((v1, v2) => v1 || v2))
             IconButton(

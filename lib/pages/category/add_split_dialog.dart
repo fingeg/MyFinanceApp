@@ -1,15 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:line_icons/line_icons.dart';
-import 'package:myfinance_app/api/categories.dart';
-import 'package:myfinance_app/utils/keys.dart';
 import 'package:myfinance_app/utils/localizations.dart';
 import 'package:myfinance_app/utils/models.dart';
-import 'package:myfinance_app/utils/static.dart';
-import 'package:myfinance_app/utils/utils.dart';
-
-const _newName = '-';
-const _me = 'me';
+import 'package:myfinance_app/widgets/name_selection.dart';
 
 class AddSplitDialog extends StatefulWidget {
   final Split split;
@@ -26,64 +19,15 @@ class AddSplitDialog extends StatefulWidget {
 
 class _AddSplitDialogState extends State<AddSplitDialog> {
   final _form = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
   final _shareController = TextEditingController();
 
   final _shareFocus = FocusNode();
+  final _selectedNameFeedback = NameSelectionFeedback();
 
-  String username;
-  String name;
-  List<String> names;
   int maxPercentage;
 
   @override
   void initState() {
-    // Load names (This task can need a while and should not stop the view,
-    // so this will be done asynchronous
-    final currentUsers = widget.currentUsers;
-    (() async {
-      final username = nameCaseCorrection(
-        await Static.storage.getSensitiveString(Keys.username),
-      );
-      final names = [
-        _newName,
-        _me,
-        ...CategoriesHandler.getUsedNames(),
-      ];
-
-      names.remove(username);
-
-      // Remove users who already are part of the split
-      currentUsers.forEach((user) {
-        user = nameCaseCorrection(user);
-        names.remove(user);
-        if (user == username) {
-          names.remove(_me);
-        }
-      });
-
-      if (widget.split != null) {
-        final currentName = getPersonDisplayName(widget.split.username);
-        if (!names.contains(currentName)) {
-          if (names.length > 2) {
-            names.insert(2, currentName);
-          } else {
-            names.add(currentName);
-          }
-        }
-      }
-
-      setState(() {
-        this.name = widget.split == null
-            ? names.length > 1
-                ? names[1]
-                : names.first
-            : getPersonDisplayName(widget.split.username);
-        this.names = names;
-        this.username = username;
-      });
-    })();
-
     maxPercentage = ((1 - widget.currentPercentage) * 100).round().toInt();
     if (widget.split != null) {
       _shareController.text = (widget.split.share * 100).toInt().toString();
@@ -94,22 +38,11 @@ class _AddSplitDialogState extends State<AddSplitDialog> {
     super.initState();
   }
 
-  String getPersonDisplayName(String name) => name
-      .replaceAll(
-        _newName,
-        MyFinanceLocalizations.of(context).addNewPayer,
-      )
-      .replaceAll(
-        _me,
-        MyFinanceLocalizations.of(context).me,
-      );
-
   void _submit() {
-    if (_form.currentState.validate()) {
+    final name = _selectedNameFeedback.getSelectedName();
+    if (_form.currentState.validate() && name.isValid) {
       final split = Split(
-        name == _newName
-            ? _nameController.text
-            : name.replaceAll(_me, username),
+        name.selectedName,
         int.parse(_shareController.text) / 100,
         false,
         DateTime.now(),
@@ -127,43 +60,12 @@ class _AddSplitDialogState extends State<AddSplitDialog> {
             key: _form,
             child: Column(
               children: [
-                if (name != null)
-                  DropdownButtonFormField<String>(
-                    onChanged: (value) => setState(() => name = value),
-                    value: name,
-                    items: [
-                      ...names
-                          .map(
-                            (name) => DropdownMenuItem<String>(
-                              value: name,
-                              child: Text(getPersonDisplayName(name)),
-                            ),
-                          )
-                          .toList(),
-                    ],
-                  ),
-                if (name == _newName)
-                  TextFormField(
-                    controller: _nameController,
-                    decoration: InputDecoration(
-                      labelText:
-                          MyFinanceLocalizations.of(context).nameOrUsername,
-                    ),
-                    onEditingComplete: _shareFocus.nextFocus,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    validator: (String value) {
-                      if (value.isEmpty) {
-                        return MyFinanceLocalizations.of(context).nameCondition;
-                      }
-                      if (widget.currentUsers
-                          .map((u) => u.toLowerCase())
-                          .contains(value.toLowerCase())) {
-                        return MyFinanceLocalizations.of(context)
-                            .splitNameCondition;
-                      }
-                      return null;
-                    },
-                  ),
+                NameSelection(
+                  currentName: widget.split?.username,
+                  namesToIgnore: widget.currentUsers,
+                  selectedNameFeedback: _selectedNameFeedback,
+                  nextFocus: _shareFocus,
+                ),
                 TextFormField(
                   controller: _shareController,
                   decoration: InputDecoration(

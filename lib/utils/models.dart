@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:myfinance_app/utils/encryption/encryption.dart';
 import 'package:myfinance_app/utils/encryption/rsa.dart';
 import 'package:myfinance_app/utils/utils.dart';

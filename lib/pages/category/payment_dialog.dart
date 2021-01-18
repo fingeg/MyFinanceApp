@@ -9,9 +9,8 @@ import 'package:myfinance_app/utils/keys.dart';
 import 'package:myfinance_app/utils/localizations.dart';
 import 'package:myfinance_app/utils/models.dart';
 import 'package:myfinance_app/utils/network.dart';
-import 'package:myfinance_app/utils/static.dart';
 import 'package:myfinance_app/widgets/delete_button.dart';
-import 'package:myfinance_app/widgets/delete_confirmation_dialog.dart';
+import 'package:myfinance_app/widgets/name_selection.dart';
 
 class PaymentDialog extends StatefulWidget {
   final Category category;
@@ -32,12 +31,14 @@ class _PaymentDialogState extends State<PaymentDialog> {
   final _descriptionController = TextEditingController();
   final _amountController = TextEditingController();
   final _dateController = TextEditingController();
-  final _payerController = TextEditingController();
 
   final _descriptionFocus = FocusNode();
   final _amountFocus = FocusNode();
   final _dateFocus = FocusNode();
   final _payerFocus = FocusNode();
+
+  final _nameSelectionFeedback = NameSelectionFeedback();
+  String _oldPayer;
 
   bool isExpense = true;
 
@@ -53,13 +54,10 @@ class _PaymentDialogState extends State<PaymentDialog> {
           _CurrencyInputFormatter.toAmountString(widget.payment.amount);
       _dateController.text =
           DateFormat('dd/MM/yyyy').format(widget.payment.date);
-      _payerController.text = widget.payment.payer;
+      _oldPayer = widget.payment.payer;
       isExpense = widget.payment.amount < 0;
     } else {
       _dateController.text = DateFormat('dd/MM/yyyy').format(DateTime.now());
-      Static.storage
-          .getSensitiveString(Keys.username)
-          .then((value) => setState(() => _payerController.text = value));
     }
     super.initState();
   }
@@ -76,7 +74,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
         _CurrencyInputFormatter.parseInput(_amountController.text) *
             (isExpense ? -1 : 1),
         DateFormat('dd/MM/yyyy').parse(_dateController.text),
-        _payerController.text,
+        _nameSelectionFeedback.getSelectedName().selectedName,
         false,
         DateTime.now(),
       );
@@ -261,20 +259,17 @@ class _PaymentDialogState extends State<PaymentDialog> {
                           },
                           onEditingComplete: _payerFocus.nextFocus,
                         ),
-                        TextFormField(
-                          controller: _payerController,
-                          decoration: InputDecoration(
-                            labelText: MyFinanceLocalizations.of(context).payer,
+                        Container(
+                          padding: EdgeInsets.only(top: 20),
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            MyFinanceLocalizations.of(context).payer,
+                            textAlign: TextAlign.start,
                           ),
-                          focusNode: _payerFocus,
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return MyFinanceLocalizations.of(context)
-                                  .payerCondition;
-                            }
-                            return null;
-                          },
+                        ),
+                        NameSelection(
+                          currentName: _oldPayer,
+                          selectedNameFeedback: _nameSelectionFeedback,
                         ),
                         if (widget.payment != null)
                           DeleteButton(

@@ -71,6 +71,7 @@ class MyFinanceLocalizations {
       'me': 'Me',
       'no_persons': 'No persons yet',
       'split_name_condition': 'The user already has a share of the bill',
+      'single_name_condition': 'The user already exists',
     },
     'de': {
       'title': 'MyFinance',
@@ -131,6 +132,7 @@ class MyFinanceLocalizations {
       'no_persons': 'Bisher keine Personen eingetragen',
       'percent_condition': 'Die zahl muss zwischen 0 und 100 sein',
       'split_name_condition': 'Der Nutzer trägt schon einen Teil der Rechnung',
+      'single_name_condition': 'Den Nutzer gibt es bereits',
     },
   };
 
@@ -175,6 +177,7 @@ class MyFinanceLocalizations {
   String get pendingInvoices => _locals['pending_invoices'];
   String get nameCondition => _locals['name_condition'];
   String get splitNameCondition => _locals['split_name_condition'];
+  String get singleNameCondition => _locals['single_name_condition'];
   String get amountCondition => _locals['amount_condition'];
   String get dateCondition => _locals['date_condition'];
   String get payerCondition => _locals['payer_condition'];
