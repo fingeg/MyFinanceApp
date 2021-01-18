@@ -171,7 +171,8 @@ class Payment {
 /// Describes the share of a user in a category bill
 class Split {
   final String username;
-  final double share;
+  /// The share from 0 to 1
+  double share;
   final bool isPlatformUser;
   final DateTime lastEdited;
 
