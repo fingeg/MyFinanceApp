@@ -39,6 +39,7 @@ class _HomePageState extends Interactor<HomePage> {
     }
 
     final _categories = await _categoryHandler.loadOfflineCategories();
+    sortCategories();
     final _persons = CategoriesHandler.loadedPersons;
     if (mounted)
       setState(() {
@@ -52,6 +53,7 @@ class _HomePageState extends Interactor<HomePage> {
 
     if (res.statusCode == StatusCode.success) {
       final _persons = CategoriesHandler.loadedPersons;
+      sortCategories();
       // Only if the widget is still in use
       if (mounted)
         setState(() {
@@ -69,6 +71,10 @@ class _HomePageState extends Interactor<HomePage> {
         _scaffoldKey.currentState.showSnackBar(
             SnackBar(content: Text(MyFinanceLocalizations.of(context).failed)));
     }
+  }
+
+  void sortCategories() {
+    categories.sort((c1, c2) => c2.lastEdited.compareTo(c1.lastEdited));
   }
 
   @override

@@ -1,11 +1,9 @@
-import 'package:flutter_event_bus/flutter_event_bus.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_event_bus/flutter_event_bus.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:myfinance_app/api/payments.dart';
 import 'package:myfinance_app/utils/events.dart';
-import 'package:myfinance_app/utils/keys.dart';
 import 'package:myfinance_app/utils/localizations.dart';
 import 'package:myfinance_app/utils/models.dart';
 import 'package:myfinance_app/utils/network.dart';
@@ -30,16 +28,13 @@ class _PaymentDialogState extends State<PaymentDialog> {
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _amountController = TextEditingController();
-  final _dateController = TextEditingController();
 
   final _descriptionFocus = FocusNode();
   final _amountFocus = FocusNode();
-  final _dateFocus = FocusNode();
-  final _payerFocus = FocusNode();
 
   final _nameSelectionFeedback = NameSelectionFeedback();
   String _oldPayer;
-
+  Date _date = Date.now();
   bool isExpense = true;
 
   bool _loading = false;
@@ -52,12 +47,11 @@ class _PaymentDialogState extends State<PaymentDialog> {
       _descriptionController.text = widget.payment.description;
       _amountController.text =
           _CurrencyInputFormatter.toAmountString(widget.payment.amount);
-      _dateController.text =
-          DateFormat('dd/MM/yyyy').format(widget.payment.date);
+
+      _date = widget.payment.date;
+      print(_date);
       _oldPayer = widget.payment.payer;
       isExpense = widget.payment.amount < 0;
-    } else {
-      _dateController.text = DateFormat('dd/MM/yyyy').format(DateTime.now());
     }
     super.initState();
   }
@@ -65,7 +59,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
   Future<void> _submit() async {
     if (_formKey.currentState.validate()) {
       setState(() => _loading = true);
-
+      print(_date);
       final payment = Payment(
         widget.payment?.id,
         _nameController.text,
@@ -73,7 +67,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
         widget.category.id,
         _CurrencyInputFormatter.parseInput(_amountController.text) *
             (isExpense ? -1 : 1),
-        DateFormat('dd/MM/yyyy').parse(_dateController.text),
+        _date,
         _nameSelectionFeedback.getSelectedName().selectedName,
         false,
         DateTime.now(),
@@ -200,7 +194,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
                             }
                             return null;
                           },
-                          onEditingComplete: _dateFocus.nextFocus,
+                          onEditingComplete: _amountFocus.unfocus,
                         ),
                         Theme(
                           data: Theme.of(context).copyWith(
@@ -238,33 +232,56 @@ class _PaymentDialogState extends State<PaymentDialog> {
                             ],
                           ),
                         ),
-                        TextFormField(
-                          controller: _dateController,
-                          decoration: InputDecoration(
-                            labelText: MyFinanceLocalizations.of(context).date,
-                          ),
-                          keyboardType: TextInputType.datetime,
-                          focusNode: _dateFocus,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.allow(
-                                RegExp(r'[0-9]|/')),
-                          ],
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          validator: (value) {
-                            if (!_isValidDate(value)) {
-                              return MyFinanceLocalizations.of(context)
-                                  .dateCondition;
-                            }
-                            return null;
-                          },
-                          onEditingComplete: _payerFocus.nextFocus,
-                        ),
                         Container(
                           padding: EdgeInsets.only(top: 20),
                           alignment: Alignment.centerLeft,
-                          child: Text(
-                            MyFinanceLocalizations.of(context).payer,
-                            textAlign: TextAlign.start,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              InkWell(
+                                onTap: () => showDatePicker(
+                                        context: context,
+                                        initialDate: _date.toDateTime(),
+                                        firstDate: DateTime(_date.year - 20),
+                                        lastDate: DateTime(_date.year + 20))
+                                    .then((date) => setState(() {
+                                          if (date != null) {
+                                            date =
+                                                date.add(date.timeZoneOffset);
+                                            _date = Date(
+                                              date.year,
+                                              date.month,
+                                              date.day,
+                                            );
+                                          }
+                                        })),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            MyFinanceLocalizations.of(context)
+                                                .date,
+                                            textAlign: TextAlign.start,
+                                          ),
+                                          Text(
+                                              '${_date.day.toString().padLeft(2, '0')}.${_date.month.toString().padLeft(2, '0')}.${_date.year}'),
+                                        ],
+                                      ),
+                                    ),
+                                    Icon(Icons.edit)
+                                  ],
+                                ),
+                              ),
+                              Container(height: 20),
+                              Text(
+                                MyFinanceLocalizations.of(context).payer,
+                                textAlign: TextAlign.start,
+                              ),
+                            ],
                           ),
                         ),
                         NameSelection(
@@ -383,22 +400,4 @@ class _CurrencyInputFormatter extends TextInputFormatter {
     }
     return false;
   }
-}
-
-bool _isValidDate(String input) {
-  String text = input.replaceAll(',', '/').replaceAll('.', '/');
-  if (text.isEmpty) {
-    return false;
-  }
-
-  try {
-    final date = DateFormat('dd/MM/yyyy').parse(input);
-
-    if (date.year > 100 && date.year < 10000) {
-      return true;
-    }
-  } catch (_) {
-    return false;
-  }
-  return false;
 }

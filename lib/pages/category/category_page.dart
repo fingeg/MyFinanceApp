@@ -51,7 +51,7 @@ class _CategoryPageState extends Interactor<CategoryPage> {
         .map((p) => _TableRow<String>(p, category.getAmountForPerson(p), p))
         .toList();
 
-    final payments = category.payments
+    final payments = category.sortedPayments
         .where((p) => !p.payed)
         .map((p) => _TableRow<Payment>(p.name, p.amount, p))
         .toList();

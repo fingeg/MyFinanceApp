@@ -102,6 +102,15 @@ class Category {
 
   List<String> getAllPayers() =>
       payments.where((p) => !p.payed).map((p) => p.payer).toSet().toList();
+
+  List<Payment> get sortedPayments => payments
+    ..sort((p1, p2) {
+      final compared = p2.date.compareTo(p1.date);
+      if (compared == 0) {
+        return p2.lastEdited.compareTo(p1.lastEdited);
+      }
+      return compared;
+    });
 }
 
 /// One payment
@@ -111,7 +120,7 @@ class Payment {
   final String description;
   final int categoryID;
   final double amount;
-  final DateTime date;
+  final Date date;
   final String payer;
   final bool payed;
   final DateTime lastEdited;
@@ -125,7 +134,7 @@ class Payment {
         json['description'],
         json['categoryID'],
         json['amount'],
-        DateTime.parse(json['date']),
+        Date.parse(json['date']),
         json['payer'],
         json['payed'],
         DateTime.fromMillisecondsSinceEpoch(json['lastEdited']),
@@ -141,7 +150,7 @@ class Payment {
             : '',
         json['categoryID'],
         double.parse(decrypt(categoryKey, Encoding.base64, json['amount'])),
-        DateTime.parse(json['date']),
+        Date.parse(json['date']),
         nameCaseCorrection(
             decrypt(categoryKey, Encoding.base64, json['payer'])),
         json['payed'] as bool,
@@ -157,7 +166,7 @@ class Payment {
           : '',
       'categoryID': categoryID,
       'amount': encrypt(categoryKey, Encoding.base64, amount.toString()),
-      'date': date.toIso8601String(),
+      'date': date.toDateString(),
       'payer': encrypt(categoryKey, Encoding.base64, payer),
       'payed': payed,
       'lastEdited': lastEdited?.millisecondsSinceEpoch,
@@ -170,6 +179,7 @@ class Payment {
 /// Describes the share of a user in a category bill
 class Split {
   final String username;
+
   /// The share from 0 to 1
   double share;
   final bool isPlatformUser;
@@ -212,4 +222,37 @@ class Person {
           .map((c) => c.getBillForPerson(name))
           .reduce((v1, v2) => v1 + v2)
       : 0.0;
+}
+
+class Date {
+  int year;
+  int month;
+  int day;
+
+  Date(this.year, this.month, this.day);
+
+  factory Date.parse(String day) {
+    final fragments = day.split('-');
+    return Date(
+      int.parse(fragments[0]),
+      int.parse(fragments[1]),
+      int.parse(fragments[2]),
+    );
+  }
+
+  factory Date.now() {
+    final now = DateTime.now();
+    return Date(
+      now.year,
+      now.month,
+      now.day,
+    );
+  }
+
+  String toDateString() =>
+      '$year-${month.toString().padLeft(2, '0')}-${day.toString().padLeft(2, '0')}';
+
+  int compareTo(Date date) => toDateTime().compareTo(date.toDateTime());
+
+  DateTime toDateTime() => DateTime(year, month, day);
 }
