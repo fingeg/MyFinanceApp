@@ -74,7 +74,7 @@ class _HomePageState extends Interactor<HomePage> {
   }
 
   void sortCategories() {
-    categories.sort((c1, c2) => c2.lastEdited.compareTo(c1.lastEdited));
+    categories?.sort((c1, c2) => c2.lastEdited.compareTo(c1.lastEdited));
   }
 
   @override

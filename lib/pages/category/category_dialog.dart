@@ -10,7 +10,6 @@ import 'package:myfinance_app/utils/localizations.dart';
 import 'package:myfinance_app/utils/models.dart';
 import 'package:myfinance_app/utils/network.dart';
 import 'package:myfinance_app/widgets/delete_button.dart';
-import 'package:myfinance_app/widgets/delete_confirmation_dialog.dart';
 
 class CategoryDialog extends StatefulWidget {
   final Category category;

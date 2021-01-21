@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:myfinance_app/utils/keys.dart';
 import 'package:myfinance_app/utils/models.dart';
-import 'package:myfinance_app/utils/static.dart';
 
 import 'card_widget.dart';
 
