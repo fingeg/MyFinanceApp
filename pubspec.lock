@@ -125,13 +125,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.0.2"
-  flutter_money_formatter:
-    dependency: transitive
-    description:
-      name: flutter_money_formatter
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.8.3"
   flutter_secure_storage:
     dependency: "direct main"
     description:
@@ -198,13 +191,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.3.0-nullsafety.5"
-  moneytextformfield:
-    dependency: "direct main"
-    description:
-      name: moneytextformfield
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.3.5+1"
   path:
     dependency: transitive
     description:

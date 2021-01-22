@@ -7,7 +7,7 @@ import 'package:myfinance_app/utils/static.dart';
 
 import 'events.dart';
 
-const host = "http://192.168.178.39:8000";
+const host = "https://myfinance.fingeg.de";
 
 enum HttpMethod { POST, GET, PUT, DELETE }
 

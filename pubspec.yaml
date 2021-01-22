@@ -21,7 +21,6 @@ dependencies:
   flutter_spinkit:
   flutter_event_bus:
   line_icons:
-  moneytextformfield:
 
 dev_dependencies:
   flutter_test:
