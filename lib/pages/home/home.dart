@@ -100,9 +100,12 @@ class _HomePageState extends Interactor<HomePage> {
       child: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
-          title: Text(
-            MyFinanceLocalizations.of(context).title,
-            style: Theme.of(context).textTheme.headline1,
+          title: Hero(
+            tag: 'title',
+            child: Text(
+              MyFinanceLocalizations.of(context).title,
+              style: Theme.of(context).textTheme.headline1,
+            ),
           ),
           actions: [
             IconButton(

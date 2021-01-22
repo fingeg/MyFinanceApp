@@ -22,43 +22,44 @@ class CardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 5, left: 10, bottom: 5, right: 10),
-      child: Card(
-        color: Theme.of(context).primaryColor,
-        child: InkWell(
-          onTap: onTap,
-          onLongPress: onLongPress,
-          borderRadius: BorderRadius.all(Radius.circular(3)),
-          child: Container(
-            width: double.infinity,
-            child: Column(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                      border: Border(
-                          bottom: BorderSide(
-                    color: Colors.white,
-                    width: 0.2,
-                  ))),
-                  alignment: Alignment.centerLeft,
-                  child: _PaymentRow(
-                    title: title,
-                    amount: amount,
-                    heroKey: id,
+      child: SingleChildScrollView(
+        child: Card(
+          color: Theme.of(context).primaryColor,
+          child: InkWell(
+            onTap: onTap,
+            onLongPress: onLongPress,
+            borderRadius: BorderRadius.all(Radius.circular(3)),
+            child: Container(
+              width: double.infinity,
+              child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                        border: Border(
+                            bottom: BorderSide(
+                      color: Colors.white,
+                      width: 0.2,
+                    ))),
+                    alignment: Alignment.centerLeft,
+                    child: _PaymentRow(
+                      title: title,
+                      amount: amount,
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    children: subInfo
-                        .map((subInfo) => _PaymentRow(
-                              title: subInfo.text,
-                              amount: subInfo.amount,
-                            ))
-                        .toList(),
+                  Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Column(
+                      children: subInfo
+                          .map((subInfo) => _PaymentRow(
+                                title: subInfo.text,
+                                amount: subInfo.amount,
+                              ))
+                          .toList(),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -68,12 +69,10 @@ class CardWidget extends StatelessWidget {
 }
 
 class _PaymentRow extends StatelessWidget {
-  final dynamic heroKey;
   final String title;
   final double amount;
 
-  const _PaymentRow({Key key, this.title, this.amount, this.heroKey})
-      : super(key: key);
+  const _PaymentRow({Key key, this.title, this.amount}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -84,19 +83,9 @@ class _PaymentRow extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         Expanded(
-          child: heroKey != null
-              ? Hero(
-                  tag: Key('$heroKey-title'),
-                  child: _Text(text: title),
-                )
-              : _Text(text: title),
+          child: _Text(text: title),
         ),
-        heroKey != null
-            ? Hero(
-                tag: Key('$heroKey-amount'),
-                child: amountWidget,
-              )
-            : amountWidget,
+        amountWidget,
       ],
     );
   }

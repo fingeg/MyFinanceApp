@@ -12,9 +12,12 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          MyFinanceLocalizations.of(context).settings,
-          style: Theme.of(context).textTheme.headline1,
+        title: Hero(
+          tag: 'title',
+          child: Text(
+            MyFinanceLocalizations.of(context).settings,
+            style: Theme.of(context).textTheme.headline1,
+          ),
         ),
       ),
       body: ListView(

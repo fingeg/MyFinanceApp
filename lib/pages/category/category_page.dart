@@ -73,7 +73,7 @@ class _CategoryPageState extends Interactor<CategoryPage> {
     return Scaffold(
       appBar: AppBar(
         title: Hero(
-          tag: '${category.id}-title',
+          tag: 'title',
           child: Text(
             category.name,
             style: Theme.of(context).textTheme.headline1,
@@ -175,10 +175,13 @@ class _CategoryPageState extends Interactor<CategoryPage> {
                 rows: pendingInvoices,
                 onTap: (row) => null,
               ),
-            CardTable<String>(
-              header: MyFinanceLocalizations.of(context).payers,
-              rows: payers,
-              onTap: (row) => null,
+            Hero(
+              tag: category.id,
+              child: CardTable<String>(
+                header: MyFinanceLocalizations.of(context).payers,
+                rows: payers,
+                onTap: (row) => null,
+              ),
             ),
             CardTable<Payment>(
               header: MyFinanceLocalizations.of(context).payments,

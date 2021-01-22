@@ -12,17 +12,20 @@ class CategoryWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final amount = category.amount;
 
-    return CardWidget(
-      id: category.id,
-      title: category.name,
-      amount: amount,
-      subInfo: category.getAllPayers().map((payer) {
-        final amount = category.getAmountForPerson(payer);
-        return SubInfo(payer, amount);
-      }).toList(),
-      onTap: () => Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => CategoryPage(category: category))),
-      onLongPress: () => null,
+    return Hero(
+      tag: category.id,
+      child: CardWidget(
+        id: category.id,
+        title: category.name,
+        amount: amount,
+        subInfo: category.getAllPayers().map((payer) {
+          final amount = category.getAmountForPerson(payer);
+          return SubInfo(payer, amount);
+        }).toList(),
+        onTap: () => Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => CategoryPage(category: category))),
+        onLongPress: () => null,
+      ),
     );
   }
 }
