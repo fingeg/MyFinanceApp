@@ -15,11 +15,14 @@ class MyFinanceLocalizations {
       'title': 'MyFinance',
       'login_page': 'Login Page',
       'login': 'Sign in',
+      'logout': 'Sign out',
       'register': 'Sign up',
       'or': 'or',
-      'password_length_condition': 'The password has to be at least 5 characters long',
+      'password_length_condition':
+          'The password has to be at least 5 characters long',
       'password_validation_condition': 'The passwords are unequal',
-      'username_length_condition': 'The username has to be between 4 and 10 characters',
+      'username_length_condition':
+          'The username has to be between 4 and 10 characters',
       'username_character_condition': 'Only A-Z, a-z and 0-9 are allowed',
       'back': 'Back',
       'username': 'Username',
@@ -75,12 +78,16 @@ class MyFinanceLocalizations {
     },
     'de': {
       'title': 'MyFinance',
+      'logout': 'Abmelden',
+      'login': 'Login',
       'login_page': 'Login Seite',
       'register': 'Registrieren',
       'or': 'oder',
-      'password_length_condition': 'Das Passwort muss mindestens 5 Zeichen Lang sein',
+      'password_length_condition':
+          'Das Passwort muss mindestens 5 Zeichen Lang sein',
       'password_validation_condition': 'Die Passwörter sind ungleich',
-      'username_length_condition': 'Der Nutzername muss zwischen 4 und 10 Zeichen lang sein',
+      'username_length_condition':
+          'Der Nutzername muss zwischen 4 und 10 Zeichen lang sein',
       'username_character_condition': 'Nur A-Z, a-z und 0-9 sind erlaubt',
       'back': 'Zurück',
       'username': 'Nutzername',
@@ -140,7 +147,11 @@ class MyFinanceLocalizations {
 
   String get title => _locals['title'];
   String get loginPage => _locals['login_page'];
+
   String get login => _locals['login'];
+
+  String get logout => _locals['logout'];
+
   String get register => _locals['register'];
   String get or => _locals['or'];
   String get passwordLengthCondition => _locals['password_length_condition'];

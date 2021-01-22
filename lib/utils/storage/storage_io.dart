@@ -59,10 +59,15 @@ class Storage extends StorageBase {
   @override
   Future reload() => _sharedPreferences.reload();
 
-  @override
-  Future<void> storeSensitiveString(String key, String value) => _secureStorage.write(key: key, value: value);
+  void clearData() => getKeys().forEach((key) => remove(key));
 
   @override
-  Future<String> getSensitiveString(String key) => _secureStorage.read(key: key);
+  Future<void> storeSensitiveString(String key, String value) =>
+      _secureStorage.write(key: key, value: value);
 
+  @override
+  Future<String> getSensitiveString(String key) =>
+      _secureStorage.read(key: key);
+
+  Future<void> clearSensitiveData() => _secureStorage.deleteAll();
 }

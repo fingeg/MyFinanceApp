@@ -35,6 +35,9 @@ class _HomePageState extends Interactor<HomePage> {
   Future<void> loadData() async {
     // Check if logged in
     if (await Static.storage.getSensitiveString(Keys.sessionProof) == null) {
+      if (mounted) {
+        setState(() => null);
+      }
       return;
     }
 
