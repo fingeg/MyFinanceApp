@@ -4,6 +4,7 @@ import 'package:myfinance_app/pages/login/login_page.dart';
 import 'package:myfinance_app/pages/settings/settings_page.dart';
 import 'package:myfinance_app/utils/localizations.dart';
 import 'package:myfinance_app/utils/static.dart';
+
 import 'pages/home/home.dart';
 
 void main() async {
@@ -29,6 +30,9 @@ void main() async {
           buttonTheme: ButtonThemeData(
             colorScheme: ColorScheme.dark(
               primary: accentColor,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
             ),
           ),
           textTheme: TextTheme(

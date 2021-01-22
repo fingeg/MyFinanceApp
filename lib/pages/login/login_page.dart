@@ -147,9 +147,6 @@ class _LoginPageState extends State<LoginPage> {
                                     () => _loginStatus = _LoginStatus.signIn),
                                 child: Text(
                                     MyFinanceLocalizations.of(context).login),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
                               ),
                             if (_loginStatus == _LoginStatus.select)
                               Text(
@@ -313,10 +310,6 @@ class _LoginPageState extends State<LoginPage> {
                                                   MyFinanceLocalizations.of(
                                                           context)
                                                       .back),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                              ),
                                             ),
                                           ),
                                           OutlineButton(

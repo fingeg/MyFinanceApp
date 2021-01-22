@@ -308,9 +308,6 @@ class _PaymentDialogState extends State<PaymentDialog> {
                                   onPressed: () => Navigator.of(context).pop(),
                                   child: Text(
                                       MyFinanceLocalizations.of(context).back),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
                                 ),
                               ),
                               OutlineButton(

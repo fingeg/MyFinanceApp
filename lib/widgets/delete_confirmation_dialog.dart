@@ -16,16 +16,10 @@ class DeleteConfirmationDialog extends StatelessWidget {
           OutlineButton(
             onPressed: () => Navigator.of(context).pop(false),
             child: Text(MyFinanceLocalizations.of(context).no),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
           ),
           OutlineButton(
             onPressed: () => Navigator.of(context).pop(true),
             child: Text(MyFinanceLocalizations.of(context).yes),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
           ),
         ],
       );

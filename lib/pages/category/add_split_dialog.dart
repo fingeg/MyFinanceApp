@@ -101,17 +101,11 @@ class _AddSplitDialogState extends State<AddSplitDialog> {
                         child: OutlineButton(
                           onPressed: () => Navigator.of(context).pop(),
                           child: Text(MyFinanceLocalizations.of(context).back),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
                         ),
                       ),
                       OutlineButton(
                         onPressed: _submit,
                         child: Text(MyFinanceLocalizations.of(context).update),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
                       ),
                     ],
                   ),
