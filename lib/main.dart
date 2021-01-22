@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_event_bus/flutter_event_bus.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:myfinance_app/pages/login/login_page.dart';
 import 'package:myfinance_app/pages/settings/settings_page.dart';
 import 'package:myfinance_app/utils/localizations.dart';
@@ -69,6 +70,7 @@ void main() async {
       },
       localizationsDelegates: [
         MyFinanceLocalizationsDelegate(),
+        ...GlobalMaterialLocalizations.delegates,
       ],
       supportedLocales: [
         const Locale('en'),

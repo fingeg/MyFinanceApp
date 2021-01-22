@@ -241,6 +241,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
                               InkWell(
                                 onTap: () => showDatePicker(
                                         context: context,
+                                        locale: Locale('de'),
                                         initialDate: _date.toDateTime(),
                                         firstDate: DateTime(_date.year - 20),
                                         lastDate: DateTime(_date.year + 20))

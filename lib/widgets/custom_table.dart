@@ -18,84 +18,86 @@ class CustomTable<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      // First row is the header
-      if (header != null)
-        Container(
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                color: Theme.of(context).textTheme.headline1.color,
-                width: 0.3,
-              ),
-            ),
-          ),
-          child: Row(
-            children: List.generate(
-              header.columns.length,
-              (columnIndex) => Expanded(
-                flex: columnsWidths[columnIndex],
-                child: Container(
-                  decoration: columnIndex > 0
-                      ? BoxDecoration(
-                          border: Border(
-                            left: BorderSide(
-                              color:
-                                  Theme.of(context).textTheme.headline1.color,
-                              width: 0.3,
-                            ),
-                          ),
-                        )
-                      : null,
-                  child: Text(
-                    header.columns[columnIndex],
-                    textAlign: columnsAligns[columnIndex],
-                    style: Theme.of(context).textTheme.bodyText1,
-                  ),
+    return SingleChildScrollView(
+      child: Column(children: [
+        // First row is the header
+        if (header != null)
+          Container(
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: Theme.of(context).textTheme.headline1.color,
+                  width: 0.3,
                 ),
               ),
             ),
-          ),
-        ),
-      ...rows.map((row) {
-        return InkWell(
-          onTap: () => onTap(row),
-          highlightColor: Colors.black12,
-          child: Row(
-            children: List.generate(
-              row.columns.length,
-              (columnIndex) => Expanded(
-                flex: columnsWidths[columnIndex],
-                child: Container(
-                  padding:
-                      EdgeInsets.only(left: 5, right: 5, top: 5, bottom: 0),
-                  decoration: columnIndex > 0
-                      ? BoxDecoration(
-                          border: Border(
-                            left: BorderSide(
-                              color:
-                                  Theme.of(context).textTheme.headline1.color,
-                              width: 0.3,
+            child: Row(
+              children: List.generate(
+                header.columns.length,
+                (columnIndex) => Expanded(
+                  flex: columnsWidths[columnIndex],
+                  child: Container(
+                    decoration: columnIndex > 0
+                        ? BoxDecoration(
+                            border: Border(
+                              left: BorderSide(
+                                color:
+                                    Theme.of(context).textTheme.headline1.color,
+                                width: 0.3,
+                              ),
                             ),
-                          ),
-                        )
-                      : null,
-                  child: Text(
-                    row.columns[columnIndex],
-                    textAlign: columnsAligns[columnIndex],
-                    style: TextStyle(
-                      fontWeight: FontWeight.w100,
-                      fontSize: 20,
-                      color: Theme.of(context).textTheme.subtitle1.color,
+                          )
+                        : null,
+                    child: Text(
+                      header.columns[columnIndex],
+                      textAlign: columnsAligns[columnIndex],
+                      style: Theme.of(context).textTheme.bodyText1,
                     ),
                   ),
                 ),
               ),
             ),
           ),
-        );
-      }).toList(),
-    ]);
+        ...rows.map((row) {
+          return InkWell(
+            onTap: () => onTap(row),
+            highlightColor: Colors.black12,
+            child: Row(
+              children: List.generate(
+                row.columns.length,
+                (columnIndex) => Expanded(
+                  flex: columnsWidths[columnIndex],
+                  child: Container(
+                    padding:
+                        EdgeInsets.only(left: 5, right: 5, top: 5, bottom: 0),
+                    decoration: columnIndex > 0
+                        ? BoxDecoration(
+                            border: Border(
+                              left: BorderSide(
+                                color:
+                                    Theme.of(context).textTheme.headline1.color,
+                                width: 0.3,
+                              ),
+                            ),
+                          )
+                        : null,
+                    child: Text(
+                      row.columns[columnIndex],
+                      textAlign: columnsAligns[columnIndex],
+                      style: TextStyle(
+                        fontWeight: FontWeight.w100,
+                        fontSize: 20,
+                        color: Theme.of(context).textTheme.subtitle1.color,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ]),
+    );
   }
 }
 
