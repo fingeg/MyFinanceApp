@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:myfinance_app/pages/category/person_page.dart';
 import 'package:myfinance_app/utils/models.dart';
 
 import 'card_widget.dart';
 
 class PersonWidget extends StatelessWidget {
-
   final Person person;
 
   const PersonWidget({Key key, this.person}) : super(key: key);
@@ -21,7 +21,8 @@ class PersonWidget extends StatelessWidget {
         final amount = category.getBillForPerson(person.name);
         return SubInfo(category.name, amount);
       }).toList(),
-      onTap: () => null,
+      onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => PersonPage(person: person))),
       onLongPress: () => null,
     );
   }
