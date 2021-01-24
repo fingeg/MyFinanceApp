@@ -23,6 +23,23 @@ class PaymentHandler {
     return res;
   }
 
+  /// Marks all payments in the given categories as payed
+  Future<ApiResponse<bool>> markAsPayed(
+      List<int> categoryIDs, EventBus eventBus) async {
+    final auth = await AuthenticationHandler.getAuthentication();
+    final res = await request<bool>(
+      '/payment/payed',
+      HttpMethod.POST,
+      key: Keys.payments,
+      eventBus: eventBus,
+      authentication: auth,
+      data: {'categories': categoryIDs},
+      jsonParser: (json) => json['status'],
+    );
+
+    return res;
+  }
+
   /// Deletes a payment
   Future<ApiResponse<bool>> deletePayment(Payment payment) async {
     final auth = await AuthenticationHandler.getAuthentication();

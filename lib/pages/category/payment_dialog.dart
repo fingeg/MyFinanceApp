@@ -36,6 +36,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
   String _oldPayer;
   Date _date = Date.now();
   bool isExpense = true;
+  bool payed = false;
 
   bool _loading = false;
   String _errorMsg = '';
@@ -52,6 +53,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
       print(_date);
       _oldPayer = widget.payment.payer;
       isExpense = widget.payment.amount < 0;
+      payed = widget.payment.payed;
     }
     super.initState();
   }
@@ -69,7 +71,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
             (isExpense ? -1 : 1),
         _date,
         _nameSelectionFeedback.getSelectedName().selectedName,
-        false,
+        payed,
         DateTime.now(),
       );
 
@@ -130,10 +132,20 @@ class _PaymentDialogState extends State<PaymentDialog> {
 
   @override
   Widget build(BuildContext context) => SimpleDialog(
-        title: Text(
-          widget.payment == null
-              ? MyFinanceLocalizations.of(context).addPayment
-              : MyFinanceLocalizations.of(context).editPayment,
+        title: Row(
+          children: [
+            Expanded(
+              child: Text(
+                widget.payment == null
+                    ? MyFinanceLocalizations.of(context).addPayment
+                    : MyFinanceLocalizations.of(context).editPayment,
+              ),
+            ),
+            Checkbox(
+              value: payed,
+              onChanged: (value) => setState(() => payed = value),
+            )
+          ],
         ),
         contentPadding: EdgeInsets.all(20),
         children: [

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:myfinance_app/utils/localizations.dart';
 
-class DeleteConfirmationDialog extends StatelessWidget {
+class ConfirmationDialog extends StatelessWidget {
   final String title;
   final String question;
 
-  const DeleteConfirmationDialog({Key key, this.title, this.question})
+  const ConfirmationDialog({Key key, this.title, this.question})
       : super(key: key);
 
   @override

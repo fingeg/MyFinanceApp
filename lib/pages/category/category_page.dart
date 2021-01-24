@@ -36,6 +36,7 @@ class _CategoryPageState extends Interactor<CategoryPage> {
 
   bool get _isLoading => Static.loading.isLoading([Keys.categories]);
   Category category;
+  bool showPayed = false;
 
   @override
   void initState() {
@@ -52,9 +53,12 @@ class _CategoryPageState extends Interactor<CategoryPage> {
         .toList();
 
     final payments = category.sortedPayments
-        .where((p) => !p.payed)
-        .map((p) => _TableRow<Payment>(p.name, p.amount, p))
+        .where((p) => showPayed || !p.payed)
+        .map((p) => _TableRow<Payment>(p.name, p.amount, p, p.payed))
         .toList();
+
+    final payedPaymentsCount =
+        category.sortedPayments.where((p) => p.payed).length;
 
     final pendingInvoices = category.splits
         .map((p) => _TableRow<String>(p.username, amount * p.share, p.username))
@@ -194,6 +198,21 @@ class _CategoryPageState extends Interactor<CategoryPage> {
                 ),
               ),
             ),
+            if (payedPaymentsCount > 0)
+              Card(
+                color: Theme.of(context).primaryColor,
+                child: InkWell(
+                  onTap: () => setState(() => showPayed = !showPayed),
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 20, right: 20, top: 10, bottom: 10),
+                    child: Text((!showPayed
+                            ? MyFinanceLocalizations.of(context).showPayed
+                            : MyFinanceLocalizations.of(context).hidePayed)
+                        .replaceAll('N', payedPaymentsCount.toString())),
+                  ),
+                ),
+              ),
           ],
         ),
       ),
@@ -229,11 +248,12 @@ class CardTable<T> extends StatelessWidget {
             ),
             rows: rows
                 .map((row) => CustomTableRow<T>(
-                      columns: [
+              columns: [
                         row.name,
                         '${row.amount < 0 ? '-' : '+'} ${row.amount.toStringAsFixed(2).replaceAll('-', '')}€',
                       ],
                       metadata: row.metadata,
+                      grey: row.grey,
                     ))
                 .toList(),
           ),
@@ -246,7 +266,8 @@ class CardTable<T> extends StatelessWidget {
 class _TableRow<T> {
   final String name;
   final double amount;
+  final bool grey;
   final T metadata;
 
-  _TableRow(this.name, this.amount, [this.metadata]);
+  _TableRow(this.name, this.amount, [this.metadata, this.grey = false]);
 }

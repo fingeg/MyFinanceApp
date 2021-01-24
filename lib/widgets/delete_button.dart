@@ -15,7 +15,7 @@ class DeleteButton extends StatelessWidget {
   void _onDelete(BuildContext context) async {
     final confirmation = await showDialog(
       context: context,
-      builder: (context) => DeleteConfirmationDialog(
+      builder: (context) => ConfirmationDialog(
         title: text,
         question: confirmationText,
       ),

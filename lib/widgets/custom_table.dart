@@ -59,6 +59,10 @@ class CustomTable<T> extends StatelessWidget {
             ),
           ),
         ...rows.map((row) {
+          var textColor = Theme.of(context).textTheme.subtitle1.color;
+          if (row.grey) {
+            textColor = textColor.withAlpha(60);
+          }
           return InkWell(
             onTap: () => onTap(row),
             highlightColor: Colors.black12,
@@ -70,28 +74,28 @@ class CustomTable<T> extends StatelessWidget {
                   child: Container(
                     padding:
                         EdgeInsets.only(left: 5, right: 5, top: 5, bottom: 0),
-                    decoration: columnIndex > 0
-                        ? BoxDecoration(
-                            border: Border(
-                              left: BorderSide(
-                                color:
-                                    Theme.of(context).textTheme.headline1.color,
-                                width: 0.3,
-                              ),
+                        decoration: columnIndex > 0
+                            ? BoxDecoration(
+                          border: Border(
+                            left: BorderSide(
+                              color:
+                              Theme.of(context).textTheme.headline1.color,
+                              width: 0.3,
                             ),
-                          )
-                        : null,
-                    child: Text(
-                      row.columns[columnIndex],
-                      textAlign: columnsAligns[columnIndex],
-                      style: TextStyle(
-                        fontWeight: FontWeight.w100,
+                          ),
+                        )
+                            : null,
+                        child: Text(
+                          row.columns[columnIndex],
+                          textAlign: columnsAligns[columnIndex],
+                          style: TextStyle(
+                            fontWeight: FontWeight.w100,
                         fontSize: 20,
-                        color: Theme.of(context).textTheme.subtitle1.color,
+                        color: textColor,
+                      ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
               ),
             ),
           );
@@ -104,6 +108,7 @@ class CustomTable<T> extends StatelessWidget {
 class CustomTableRow<T> {
   final List<String> columns;
   final T metadata;
+  final bool grey;
 
-  CustomTableRow({@required this.columns, this.metadata});
+  CustomTableRow({@required this.columns, this.metadata, this.grey = false});
 }

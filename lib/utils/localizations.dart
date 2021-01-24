@@ -75,6 +75,12 @@ class MyFinanceLocalizations {
       'no_persons': 'No persons yet',
       'split_name_condition': 'The user already has a share of the bill',
       'single_name_condition': 'The user already exists',
+      'show_payed': 'Show all N payed payments...',
+      'hide_payed': 'Hide all N payed payments...',
+      'mark_payed': 'Mark complete bill as payed...',
+      'mark_payed_confirmation_title': 'Mark all as payed?',
+      'mark_payed_confirmation_text':
+          'Do you really want to mark all payments in the listed categories as payed? \n\nThis can only be redone for single payments!',
     },
     'de': {
       'title': 'MyFinance',
@@ -140,6 +146,12 @@ class MyFinanceLocalizations {
       'percent_condition': 'Die zahl muss zwischen 0 und 100 sein',
       'split_name_condition': 'Der Nutzer trägt schon einen Teil der Rechnung',
       'single_name_condition': 'Den Nutzer gibt es bereits',
+      'show_payed': 'Zeige alle N bezahlten Zahlungen...',
+      'hide_payed': 'Verstecke alle N bezahlten Zahlungen...',
+      'mark_payed': 'Gesamte Rechnung als bezahlt makieren...',
+      'mark_payed_confirmation_title': 'Als bezahlt makieren?',
+      'mark_payed_confirmation_text':
+          'Möchten Sie wirklich alle Zahlungen der aufgelisteten Kategorien als bezahlt makieren? \n\nDies ist nur für die Zahlungen einzelnd rückgängig zu machen!',
     },
   };
 
@@ -199,16 +211,39 @@ class MyFinanceLocalizations {
   String get deleteCategory => _locals['delete_category'];
   String get deletePayment => _locals['delete_payment'];
   String get deleteCategoryConfirmation => _locals['delete_category_confirmation'];
-  String get deletePaymentConfirmation => _locals['delete_payment_confirmation'];
+
+  String get deletePaymentConfirmation =>
+      _locals['delete_payment_confirmation'];
+
   String get revenue => _locals['revenue'];
+
   String get expense => _locals['expense'];
+
   String get splits => _locals['splits'];
+
   String get addPayer => _locals['add_payer'];
+
   String get addNewPayer => _locals['add_new_payer'];
+
   String get nameOrUsername => _locals['name_or_username'];
+
   String get share => _locals['share'];
+
   String get percentCondition => _locals['percent_condition'];
+
   String get me => _locals['me'];
+
+  String get showPayed => _locals['show_payed'];
+
+  String get hidePayed => _locals['hide_payed'];
+
+  String get markPayed => _locals['mark_payed'];
+
+  String get markPayedConfirmationTitle =>
+      _locals['mark_payed_confirmation_title'];
+
+  String get markPayedConfirmationText =>
+      _locals['mark_payed_confirmation_text'];
 }
 
 class MyFinanceLocalizationsDelegate extends LocalizationsDelegate<MyFinanceLocalizations> {
